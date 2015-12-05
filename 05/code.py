@@ -20,6 +20,4 @@ with open("input", "r") as name_list:
 			if vowels >= 3 and twice_letter:
 				nice += 1
 
-if nice != 258:
-	print("Didn't work")
 print("Nice names: {}".format(nice))
