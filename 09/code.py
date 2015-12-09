@@ -26,14 +26,17 @@ class Map:
     def find_shortest(self,city_from,cities_list):
         trips = self.map[city_from].trips
         shortest = sys.maxint * len(cities_list)
+        longest = 0
         for d in trips.keys():
             if trips[d] in cities_list:
                 cl = cities_list[:]
                 cl.remove(trips[d])
-                dist = int(d) + self.find_shortest(trips[d], cl)
-                if dist < shortest:
-                    shortest = dist
-        return shortest
+                (s,l) = map(lambda x: int(d) + x, self.find_shortest(trips[d], cl))
+                if s < shortest:
+                    shortest = s
+                if l > longest:
+                    longest = l
+        return (shortest, longest)
 
 
 
@@ -46,10 +49,13 @@ with open("input", "r") as trips:
         m.add_trip(city_from, city_to, distance)
 
 shortest = sys.maxint
+longest = 0
 for city in m.map:
     cities_list = m.map.keys()
     cities_list.remove(city)
-    tot_distance = m.find_shortest(city,cities_list)
-    if tot_distance < shortest:
-        shortest = tot_distance
-print shortest
+    (short_trip,long_trip) = m.find_shortest(city,cities_list)
+    if short_trip < shortest:
+        shortest = short_trip
+    if long_trip > longest:
+        longest = long_trip
+print("Shortest: {}\nLongest: {}".format(shortest,longest))
