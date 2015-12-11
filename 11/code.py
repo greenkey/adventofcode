@@ -14,11 +14,6 @@ def next_password(string):
 	while True:
 		string = next_string(string)
 
-		# avoided letters
-		if 'i' in string: continue
-		if 'o' in string: continue
-		if 'l' in string: continue
-
 		# two pairs
 		found = 0
 		i = 1
