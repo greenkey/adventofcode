@@ -41,4 +41,8 @@ def next_password(string):
 		return string
 
 if __name__ == "__main__":
-	print("Next password: {}".format( next_password(sys.argv[1]) ))
+	print("Calculating all the passwords, press CTRL-C to stop.")
+	password = sys.argv[1]
+	while True:
+		password = next_password(password)
+		print("Next password: {}".format( password ))
