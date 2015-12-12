@@ -9,6 +9,8 @@ def objSum(obj):
 			s += objSum(i)
 	if type(obj) == dict:
 		for k,v in obj.items():
+			if v == "red":
+				return 0
 			s += objSum(v)
 	return s
 
