@@ -25,7 +25,6 @@ class Attendees():
             tpe += self.people[name].peWith(name_r)
         return tpe
 
-
     def findGreatestHappiness(self):
         greatestHappiness = 0
         for c in self.findTableConfigurations():
@@ -33,6 +32,12 @@ class Attendees():
             if actualPE > greatestHappiness:
                 greatestHappiness = actualPE
         return greatestHappiness
+
+    def addNeutralAttendant(self,name):
+        currentAttendees = list(self.people.keys())
+        for ca in currentAttendees:
+            self.addPotentialHappiness(name,0,ca)
+            self.addPotentialHappiness(ca,0,name)
 
 class Person():
     def __init__(self,name):
@@ -71,3 +76,6 @@ if __name__ == "__main__":
             attendees.addPotentialHappiness(who=who, pe=pe, otherPerson=otherPerson)
 
     print("total change in happiness: {}".format(attendees.findGreatestHappiness()))
+
+    attendees.addNeutralAttendant("me")
+    print("total change in happiness with me: {}".format(attendees.findGreatestHappiness()))
