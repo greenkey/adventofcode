@@ -13,7 +13,7 @@ class Attendees():
 
     def findTableConfigurations(self):
         keys = list(self.people.keys())
-        return permutations(keys)
+        return map(lambda x: keys[:1] + x, permutations(keys[1:]) )
 
     def totalPE(self,conf):
         tpe = 0
