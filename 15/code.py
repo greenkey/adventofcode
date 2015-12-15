@@ -1,17 +1,27 @@
+from random import shuffle
 
 
-
-def getScoreUsing(properties,ingredients):
+def getScoreUsing(properties,ingredients, maxCalories=None):
     score = 1
+    calories = 0
+    tot = sum(ingredients.values())
+    for i in ingredients.keys():
+        ingredients[i] = int(round(  ingredients[i] * 100.0 / tot  ))
     for p in properties.keys():
         if p != "calories":
             propScore = 0
             for i in ingredients.keys():
-                qtt = ingredients[i] * 100.0 / sum(ingredients.values())
-                propScore += qtt * properties[p][i]
+                propScore += ingredients[i] * properties[p][i]
             score *= max(0,propScore)
-    print("With {}: {}".format(ingredients,score))
-    return score
+        else:
+            for i in ingredients.keys():
+                calories += ingredients[i] * properties[p][i]
+
+    print("With {}: {} ({} calories)".format(ingredients,score,calories))
+    if calories > (maxCalories or calories):
+        return None
+    else:
+        return score
 
 
 if __name__ == "__main__":
@@ -30,12 +40,12 @@ if __name__ == "__main__":
             properties["calories"][name] =    int( calories.split(" ")[2]   )
 
     ings = ingredients.keys()
-    for i in range(len(ings)):
+    for i in range(1,len(ings)):
         score = 0
         q = 0
         while True:
             ingredients[ings[i]] = q
-            newScore = getScoreUsing(properties,ingredients)
+            newScore = getScoreUsing(properties,ingredients,521) or score
             if newScore > score:
                 score = newScore
             elif newScore < score:
