@@ -23,3 +23,19 @@ class MFCSAM():
             for c in self.compounds:
                 obj[c] = re.search("([0-9])", hashlib.sha512(c + what).hexdigest()).group(1)
         return obj
+
+class AuntList():
+    def __init__(self):
+        self.al = dict()
+        pass
+
+    def getFromFile(self,filename):
+        with open(filename, "r") as aunt_list:
+            for aunt in aunt_list:
+                #Sue 1: children: 1, cars: 8, vizslas: 7
+                (name,compounds) = re.search("(Sue [0-9]*):(.*)",aunt).groups()
+                self.al[name] = dict()
+                for c in compounds.split(","):
+                    c = c.split(":")
+                    self.al[name][c[0].strip()] = int(c[1].strip())
+
