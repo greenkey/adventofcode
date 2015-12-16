@@ -39,15 +39,28 @@ class AuntList():
                     c = c.split(":")
                     self.al[name][c[0].strip()] = int(c[1].strip())
 
-    def matchCompounds(self,comps):
+    def matchCompounds(self,comps,MFCSAM_type='new_retroencabulator'):
         match = list()
         for aunt_name,aunt_comps in self.al.items():
             right_aunt = True
             for comp in comps.keys():
                 try:
-                    if aunt_comps[comp] != comps[comp]:
-                        right_aunt = False
-                        break
+                    if MFCSAM_type == 'new_retroencabulator':
+                        if aunt_comps[comp] != comps[comp]:
+                            right_aunt = False
+                            break
+                    elif MFCSAM_type == 'old_retroencabulator':
+                        if comp in ('cats','trees'):
+                            if aunt_comps[comp] <= comps[comp]:
+                                right_aunt = False
+                                break
+                        elif comp in ('pomeranians','goldfish'):
+                            if aunt_comps[comp] >= comps[comp]:
+                                right_aunt = False
+                                break
+                        elif aunt_comps[comp] != comps[comp]:
+                            right_aunt = False
+                            break
                 except:
                     pass
             if right_aunt:
