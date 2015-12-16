@@ -53,3 +53,13 @@ class AuntList():
             if right_aunt:
                 match.append(aunt_name)
         return match
+
+if __name__ == "__main__":
+    machine = MFCSAM()
+    compounds = machine.put("wrapping from the gift")
+
+    aunt_list = AuntList()
+    aunt_list.getFromFile("aunts.input")
+
+    print("Which Sue got you the gift: {}".format(aunt_list.matchCompounds(compounds)))
+
