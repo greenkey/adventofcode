@@ -76,3 +76,5 @@ if __name__ == "__main__":
 
     print("Which Sue got you the gift: {}".format(aunt_list.matchCompounds(compounds)))
 
+    print("Which Sue got you the gift: {}".format(aunt_list.matchCompounds(compounds,'old_retroencabulator')))
+
