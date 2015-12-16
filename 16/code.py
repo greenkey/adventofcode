@@ -47,7 +47,7 @@ class AuntList():
                 try:
                     if aunt_comps[comp] != comps[comp]:
                         right_aunt = False
-                        continue
+                        break
                 except:
                     pass
             if right_aunt:
