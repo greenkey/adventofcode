@@ -39,3 +39,17 @@ class AuntList():
                     c = c.split(":")
                     self.al[name][c[0].strip()] = int(c[1].strip())
 
+    def matchCompounds(self,comps):
+        match = list()
+        for aunt_name,aunt_comps in self.al.items():
+            right_aunt = True
+            for comp in comps.keys():
+                try:
+                    if aunt_comps[comp] != comps[comp]:
+                        right_aunt = False
+                        continue
+                except:
+                    pass
+            if right_aunt:
+                match.append(aunt_name)
+        return match
