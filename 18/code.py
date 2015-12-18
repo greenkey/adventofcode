@@ -58,7 +58,23 @@ if __name__ == "__main__":
     with open('input', 'r') as container_list:
         cgof.setBoardFromString(board=container_list.read(),on_char="#",off_char=".")
     print(cgof.getBoardString(on_char="#",off_char="."))
-    cgof.advance(of=100)
     print("Calculating...")
+    cgof.advance(of=100)
     print(cgof.getBoardString(on_char="#",off_char="."))
     print("The sum of on lights: {}".format(cgof.countOn()))
+
+    with open('input', 'r') as container_list:
+        cgof.setBoardFromString(board=container_list.read(),on_char="#",off_char=".")
+    print("ReCalculating...")
+    for i in range(100):
+        cgof.set(0,0,"on")
+        cgof.set(0,-1,"on")
+        cgof.set(-1,0,"on")
+        cgof.set(-1,-1,"on")
+        cgof.advance(of=1)
+    cgof.set(0,0,"on")
+    cgof.set(0,-1,"on")
+    cgof.set(-1,0,"on")
+    cgof.set(-1,-1,"on")
+    print(cgof.getBoardString(on_char="#",off_char="."))
+    print("The sum of on lights: {}".format(cgof.countOn()))    
