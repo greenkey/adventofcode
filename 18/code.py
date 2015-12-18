@@ -46,3 +46,16 @@ class ConwayGameOfLife():
         for i in range(of):
             self.advanceOne()
 
+
+if __name__ == "__main__":
+
+    cgof = ConwayGameOfLife("100x100")
+
+    # get first configuration
+    with open('input', 'r') as container_list:
+        cgof.setBoardFromString(board=container_list.read(),on_char="#",off_char=".")
+    print(cgof.getBoardString(on_char="#",off_char="."))
+    cgof.advance(of=100)
+    print("Calculating...")
+    print(cgof.getBoardString(on_char="#",off_char="."))
+    print("The sum of on lights: {}".format(cgof.countOn()))
