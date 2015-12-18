@@ -46,6 +46,9 @@ class ConwayGameOfLife():
         for i in range(of):
             self.advanceOne()
 
+    def set(self,x,y,state):
+        self.matrix[x][y] = 1 if state=="on" else 0
+
 
 if __name__ == "__main__":
 
