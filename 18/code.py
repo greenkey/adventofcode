@@ -39,3 +39,10 @@ class ConwayGameOfLife():
                     newMatrix[x][y] = 1
         self.matrix = newMatrix
 
+    def countOn(self):
+        return sum(map(lambda line: sum(line), self.matrix))        
+
+    def advance(self,of):
+        for i in range(of):
+            self.advanceOne()
+
