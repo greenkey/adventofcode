@@ -8,6 +8,7 @@ instructions = sys.argv[1].split(', ')
 
 current_position = (0, 0)
 current_direction = 0 #N
+positions_visited = [(0,0)]
 
 for i in instructions:
     if i[0] == 'R':
@@ -18,15 +19,19 @@ for i in instructions:
 
     steps = int(i[1:])
 
-    if current_direction == 0: #North
-        current_position = (current_position[0], current_position[1]+steps)
-    elif current_direction == 1: #East
-        current_position = (current_position[0]+steps, current_position[1])
-    elif current_direction == 2: #South
-        current_position = (current_position[0], current_position[1]-steps)
-    elif current_direction == 3: #West
-        current_position = (current_position[0]-steps, current_position[1])
+    for n in range(steps):
+        if current_direction == 0: #North
+            current_position = (current_position[0], current_position[1]+1)
+        elif current_direction == 1: #East
+            current_position = (current_position[0]+1, current_position[1])
+        elif current_direction == 2: #South
+            current_position = (current_position[0], current_position[1]-1)
+        elif current_direction == 3: #West
+            current_position = (current_position[0]-1, current_position[1])
 
-print(current_position)
+        if current_position in positions_visited:
+            print("Already been here: {} - distance: {}".format(current_position, abs(sum(current_position)) ))
 
-print(abs(sum(current_position)))
+        positions_visited.append(current_position)
+
+print("Final position: {} - distance: {}".format(current_position, abs(sum(current_position)) ))
