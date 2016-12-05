@@ -16,7 +16,7 @@ def find_password(door):
 		i += 1
 	return password
 
-def find_password2(door):
+def find_password2(door,cinematic=False):
 	password = list("        ")
 	i = 0
 	while sum([0 if c==' ' else 1 for c in password]) < 8:
@@ -27,10 +27,13 @@ def find_password2(door):
 				if password[position] == ' ':
 					character = current_hash[6]
 					password[position] = character
-					print("password so far: {} - i={} - hash={}".format(''.join(password), i, current_hash))
 			except:
 				pass
+		if cinematic and i%(10000)==0:
+			print("\rPassword: {} ({}+ attempts)".format( ''.join([current_hash[c+5] if password[c]==" " else password[c] for c in range(len(password))]), i ), end="")
 		i += 1
 	return ''.join(password)
 
-print(find_password2(sys.argv[1]))
+print("\n\nfinding password...\n\n")
+find_password2(sys.argv[1],cinematic=True)
+print("\n\nPassword found")
