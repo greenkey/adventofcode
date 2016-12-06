@@ -11,10 +11,12 @@ def get_message_from_stream(f):
 			except IndexError:
 				counter.append(counter_template[:])
 				counter[c][ord(l[c])-ord('a')] += 1
-	s = ''
+	s1 = ''
+	s2 = ''
 	for c in range(len(counter)):
-		s += chr(counter[c].index(max(counter[c]))+ord('a'))
-	return(s)
+		s1 += chr(counter[c].index(max(counter[c]))+ord('a'))
+		s2 += chr(counter[c].index(min(counter[c]))+ord('a'))
+	return (s1,s2)
 
 with open(sys.argv[1],'r') as f:
 	print(get_message_from_stream(f))
