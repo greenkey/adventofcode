@@ -22,6 +22,27 @@ def decompress(s):
             i += 1
     return decompressed
 
+def decompress_v2_count(s):
+    count = 0
+    i = 0
+    while i < len(s):
+        if s[i] == "(":
+            marker = ""
+            while s[i] != ")":
+                i += 1
+                marker += s[i]
+            i += 1
+            (characters,times) = [int(_) for _ in marker[:-1].split('x')]
+            dec1 = decompress_v2_count(s[i:i+characters])
+            count += dec1 * times
+            i += characters
+        elif s[i] != " ":
+            count += 1
+            i += 1
+    return count
+
 
 s = decompress(sys.argv[1])
-print("Decompressed string: {} (length: {})".format(s, len(s)))
+print("Part One: {}".format(len(s)))
+
+print("Part Two: {}".format(decompress_v2_count(s)))
