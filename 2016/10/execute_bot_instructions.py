@@ -87,3 +87,7 @@ def log_print_condition(s):
 with open(sys.argv[1],'r') as f:
     for l in f:
         bs.execute(l.strip())
+
+(o0,o1,o2) = [int(bs.bots[n].values[0]) for n in ["output 0","output 1","output 2"]]
+
+print("Part two: {}".format( o0*o1*o2 ))
