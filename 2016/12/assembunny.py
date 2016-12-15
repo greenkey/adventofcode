@@ -9,6 +9,9 @@ register = {
 	'c': 0,
 	'd': 0
 }
+for i in range(len(sys.argv[2:])):
+	register[sorted(register.keys())[i]] = int(sys.argv[i+2])
+
 i = 0
 while i < len(code):
 	line = code[i]
