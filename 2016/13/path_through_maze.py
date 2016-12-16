@@ -82,6 +82,20 @@ def find_paths2(initial_position,position_to_reach,maze):
 				if (x,y) == position_to_reach:
 					return p + [(x,y)]
 				paths_so_far.insert(0, p + [(x,y)] )
+
+def find_reachable_locations(initial_position,maze,max_steps):
+	paths_so_far = [[initial_position]]
+	while paths_so_far:
+		p = paths_so_far.pop()
+		if len(p) > max_steps:
+			continue
+		print(maze.print_with_path(p))
+		#print(p)
+		#input()
+		(x,y) = p[-1]
+		for (x,y) in [(x+1, y),(x, y+1),(x-1, y),(x, y-1)]:
+			if x>=0 and y>=0 and maze.is_free_and_new(x, y):
+				paths_so_far.insert(0, p + [(x,y)] )
 		
 
 m = Maze(int(sys.argv[1]))
@@ -99,3 +113,8 @@ min_path = None
 min_path = find_paths2(position,position_to_reach,m)
 
 print("Found path with {} steps:\n{}".format(len(min_path)-1, min_path))
+
+m = Maze(int(sys.argv[1]))
+find_reachable_locations(position,m,int(sys.argv[3]))
+
+print("Total number of reached locations: {}".format( sum(m.maze.values()) ))
