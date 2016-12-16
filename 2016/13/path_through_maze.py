@@ -45,43 +45,21 @@ class Maze():
 			return False
 		return self.is_free(x,y)
 
-def find_paths(path_so_far,position_to_reach,maze):
-	print(maze)
-	print(path_so_far[-1],position_to_reach)
-	print(path_so_far[-1] == position_to_reach)
-	input()
-	if path_so_far[-1] == position_to_reach:
-		yield path_so_far
-	else:
-		(x,y) = path_so_far[-1]
-		print("current position",x,y)
-		next_position = set()
-		if maze.is_free_and_new(x+1, y):
-			next_position.add((x+1, y))
-		if maze.is_free_and_new(x, y+1):
-			next_position.add((x, y+1))
-		if x > 0 and maze.is_free_and_new(x-1, y):
-			next_position.add((x-1, y))
-		if y > 0 and maze.is_free_and_new(x, y-1):
-			next_position.add((x, y-1))
-		print("next positions", next_position)
-		for p in next_position:
-			for path in find_paths(path_so_far+[(p[0], p[1])], position_to_reach, maze):
-				yield path
+	def find_next_position_from(self,position):
+		(x,y) = position
+		for (x,y) in [(x+1, y),(x, y+1),(x-1, y),(x, y-1)]:
+			if x>=0 and y>=0 and self.is_free_and_new(x, y):
+				yield (x,y)
 
-def find_paths2(initial_position,position_to_reach,maze):
+def find_paths(initial_position,position_to_reach,maze):
 	paths_so_far = [[initial_position]]
 	while paths_so_far:
 		p = paths_so_far.pop()
-		print(maze.print_with_path(p))
-		#print(p)
-		#input()
 		(x,y) = p[-1]
-		for (x,y) in [(x+1, y),(x, y+1),(x-1, y),(x, y-1)]:
-			if x>=0 and y>=0 and maze.is_free_and_new(x, y):
-				if (x,y) == position_to_reach:
-					return p + [(x,y)]
-				paths_so_far.insert(0, p + [(x,y)] )
+		for (x,y) in maze.find_next_position_from(p[-1]):
+			if (x,y) == position_to_reach:
+				return p + [(x,y)]
+			paths_so_far.insert(0, p + [(x,y)] )
 
 def find_reachable_locations(initial_position,maze,max_steps):
 	paths_so_far = [[initial_position]]
@@ -89,13 +67,8 @@ def find_reachable_locations(initial_position,maze,max_steps):
 		p = paths_so_far.pop()
 		if len(p) > max_steps:
 			continue
-		print(maze.print_with_path(p))
-		#print(p)
-		#input()
-		(x,y) = p[-1]
-		for (x,y) in [(x+1, y),(x, y+1),(x-1, y),(x, y-1)]:
-			if x>=0 and y>=0 and maze.is_free_and_new(x, y):
-				paths_so_far.insert(0, p + [(x,y)] )
+		for (x,y) in maze.find_next_position_from(p[-1]):
+			paths_so_far.insert(0, p + [(x,y)] )
 		
 
 m = Maze(int(sys.argv[1]))
@@ -103,14 +76,7 @@ position = (1,1)
 position_to_reach = tuple([int(i) for i in sys.argv[2].split(',')])
 
 min_path = None
-#for p in find_paths([position],position_to_reach,m):
-#	print("path found: {}".format(p))
-#	print(m)
-#	if not min_path:
-#		min_path = p
-#	elif len(min_path) > len(p):
-#		min_path = p
-min_path = find_paths2(position,position_to_reach,m)
+min_path = find_paths(position,position_to_reach,m)
 
 print("Found path with {} steps:\n{}".format(len(min_path)-1, min_path))
 
