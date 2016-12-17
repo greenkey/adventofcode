@@ -24,6 +24,9 @@ def get_next_paths(path_pos,passcode):
 passcode = sys.argv[1]
 vault_coord = (3,3)
 init_coord = (0,0)
+
+# Step One: find the shortest path
+
 paths = [ ("",init_coord) ]
 
 while paths:
@@ -33,3 +36,19 @@ while paths:
     paths = list(get_next_paths(p,passcode)) + paths
 
 print("Shortest path: {} ({} steps)".format(p[0], len(p[0])))
+
+
+# Step Two: find the longest paths
+
+longest_path = p[0]
+paths = [ ("",init_coord) ]
+
+while paths:
+    p = paths.pop()
+    if p[1] == vault_coord:
+        if len(p[0]) > len(longest_path):
+            longest_path = p[0]
+    else:
+        paths = list(get_next_paths(p,passcode)) + paths
+
+print("Longest path: {} ({} steps)".format(longest_path, len(longest_path)))
