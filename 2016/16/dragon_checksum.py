@@ -22,3 +22,4 @@ if __name__ == '__main__':
     data = data[:disk_length]
 
     print(checksum(data))
+    # this is enough for both the steps
