@@ -6,7 +6,9 @@ blacklist = set()
 
 curmax = 0
 found = False
-while not found:
+foundmin = False
+whitelist = set()
+while curmax <= 2**32:
 	found = True
 	i = curmax
 	for (start,end) in list(blacklist):
@@ -15,5 +17,9 @@ while not found:
 			blacklist.remove((start,end))
 			found = False
 	if found:
-		print(curmax)
-		break
+		if not foundmin:
+			print(curmax)
+			foundmin = True
+		whitelist.add(curmax)
+		curmax += 1
+print(len(whitelist)-1)
