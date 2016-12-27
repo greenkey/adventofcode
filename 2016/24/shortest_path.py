@@ -109,3 +109,32 @@ if __name__ == '__main__':
     print(m.get_map_with_path(min_path))
 
     print("shortest path length: {} ({})".format(len(min_path)-1,''.join([str(c) for c in mp])))
+
+
+    # Step Two
+
+    # calculate the shortest path
+    min_path = None
+    mp = ""
+    for p in new_paths:
+        total_path = list()
+        for c in range(len(p)):
+            a = p[c]
+            try:
+                b = p[c+1]
+                total_path = total_path[:-1] + m.find_shortest_path(a,b)
+            except IndexError:
+                pass
+        total_path = total_path[:-1] + m.find_shortest_path(b,0)
+
+        if min_path:
+            if len(min_path) > len(total_path):
+                min_path = total_path
+                mp = p
+        else:
+            min_path = total_path
+            mp = p
+
+    print(m.get_map_with_path(min_path))
+
+    print("shortest path length: {} ({})".format(len(min_path)-1,''.join([str(c) for c in mp])))
