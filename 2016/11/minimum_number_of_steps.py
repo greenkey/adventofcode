@@ -11,15 +11,16 @@ class IsolatedArea():
         self.elevator = 1
 
     def __hash__(self):
-        #return hash('\n'.join(['|'.join(sorted(f)) for f in self.floors]))
-        return hash(str(self))
-        ret = 0
-        objects = sorted(self.objects)
-        for o in range(len(objects)):
-            for f in range(len(self.floors)):
-                if objects[o] in self.floors[f]:
-                    ret += 4**o*f
-        return ret
+        ret = str(self.elevator)+'+'
+        for f in range(len(self.floors)):
+            floor = sorted(self.floors[f])
+            for obj in floor:
+                if obj[:-1]+('M' if obj[-1]=='G' else 'G') in floor:
+                    ret += 'couple-'
+                else:
+                    ret += obj + '-'
+            ret += '\n'
+        return hash(ret)
 
     def __str__(self):
         return self.pretty_print()
@@ -75,33 +76,53 @@ class IsolatedArea():
         self.elevator += direction
         self.floors[self.elevator] |= set(objs)
 
+    def add(self,object_desc,floor):
+        object_desc = object_desc.replace('-compatible','')
+        object_desc = object_desc.strip().split()[0]+object_desc.strip().split()[1][0].upper()
+        self.floors[floor].add(object_desc)
+        self.objects.add(object_desc)
+
     def next_possible_moves(self):
         current_floor = self.floors[self.elevator]
-        for move_direction in [self.UP, self.DOWN]:
+        directions = [self.UP]
+        if sum([len(f) for f in self.floors[:self.elevator]]) > 0:
+            directions.append(self.DOWN)
+        for move_direction in directions:
             for obj1 in current_floor:
-                new = self.copy()
-                try:
-                    new.move([obj1],move_direction)
-                    if new.is_safe_condition():
-                        yield new
-                except:
-                    pass
+                found = False
 
-                for obj2 in current_floor:
-                    if obj1 != obj2:
-                        new = self.copy()
-                        try:
-                            new.move([obj1,obj2],move_direction)
-                            if new.is_safe_condition():
-                                yield new
-                        except:
-                            pass
+                # try to move up two objects
+                if move_direction == self.UP:
+                    for obj2 in current_floor:
+                        if obj1 != obj2:
+                            new = self.copy()
+                            try:
+                                new.move([obj1,obj2],move_direction)
+                                if new.is_safe_condition():
+                                    yield new
+                                    found = True
+                            except:
+                                pass
+
+                # not found any move, either try to go down or move up one object
+                if not found:
+                    new = self.copy()
+                    try:
+                        new.move([obj1],move_direction)
+                        if new.is_safe_condition():
+                            yield new
+                    except:
+                        pass
+
+
 
 
 
 
 if __name__ == '__main__':
     import sys
+    #from time import time
+
     if len(sys.argv)>1:
         fname = sys.argv[1]
     else:
@@ -112,12 +133,39 @@ if __name__ == '__main__':
 
     print(ia)
 
+    #next_moves = [[ia]]
+    #explored_layouts = set()
+    #while next_moves:
+    #    moves = next_moves.pop(0)
+    #    ia = moves[-1]
+    #    #print(len(explored_layouts),len(next_moves)," ",end='\r')
+    #    if len(ia.floors[4] ^ ia.objects)  == 0:
+    #        print('\n\nfound\n\n')
+    #        break
+    #    for nm in ia.next_possible_moves():
+    #        if nm not in explored_layouts:
+    #            next_moves.append(moves+[nm])
+    #            explored_layouts.add(nm)
+
+    #print(f"Moves: {len(moves)-1}")
+
+    ia.add('elerium generator',1)
+    ia.add('elerium-compatible microchip',1)
+    ia.add('dilithium generator',1)
+    ia.add('dilithium-compatible microchip',1)
+    print(ia)
+
     next_moves = [[ia]]
     explored_layouts = set()
+    #mn = 0
+    #start_time = time()
     while next_moves:
         moves = next_moves.pop(0)
         ia = moves[-1]
-        #print(len(explored_layouts),len(next_moves)," ",end='\r')
+        #if len(moves) != mn:
+        #    print(f"explored: {len(explored_layouts)} - to explore: {len(next_moves)} - moves: {len(moves)} - time elapsed: {time() - start_time:.2f}  ")
+        #    #start_time = time()
+        #    mn = len(moves)
         if len(ia.floors[4] ^ ia.objects)  == 0:
             print('\n\nfound\n\n')
             break
@@ -126,8 +174,8 @@ if __name__ == '__main__':
                 next_moves.append(moves+[nm])
                 explored_layouts.add(nm)
 
-    print(f"Moves: {len(moves)-1}")
-    for m in moves:
-        print(m)
-        input()
+    #print(f"Moves: {len(moves)-1}")
+    #for m in moves:
+    #    print(m)
+    #    #input()
     print(f"Moves: {len(moves)-1}")
