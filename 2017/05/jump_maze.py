@@ -17,15 +17,20 @@ def cpu1(instructions):
 def cpu2(instructions):
     i = 0
     jumps = 0
-    while i >= 0 and i < len(instructions):
-        n = i + instructions[i]
-        if instructions[i] >= 3:
-            instructions[i] -= 1
-        else:
-            instructions[i] += 1
-        i = n
-        jumps += 1
+    while True:
+        try:
+            x = instructions[i]
+            n = i + x
+            if x > 2:
+                instructions[i] -= 1
+            else:
+                instructions[i] += 1
+            i = n
+            jumps += 1
+        except IndexError:
+            break
     return jumps
 
-print(cpu1(getInstructions()))
-print(cpu2(getInstructions()))
+if __name__ == "__main__":
+    print(cpu1(getInstructions()))
+    print(cpu2(getInstructions()))
