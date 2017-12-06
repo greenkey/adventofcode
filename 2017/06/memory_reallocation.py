@@ -5,11 +5,15 @@ with open("input") as f:
 
 for bank in banks:
     combinations = dict()
+    cicles = 0
     while True:
         signature = tuple(bank)
         if signature in combinations:
             print(len(combinations))
-            break
+            if cicles == 1:
+                break
+            cicles += 1
+            combinations = dict()
         combinations[signature] = 1
 
         biggest = max(bank)
