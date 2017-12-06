@@ -44,9 +44,15 @@ func main() {
 	banks := readFile("input")
 	for _, b := range banks {
 		combinations := make(map[string]int)
+		cicleCombination := 0
 		for {
 			if combinations[bankSignature(b)] == 1 {
-				break
+				fmt.Println(len(combinations))
+				cicleCombination++
+				if cicleCombination == 2 {
+					break
+				}
+				combinations = make(map[string]int)
 			}
 			combinations[bankSignature(b)] = 1
 			i, n := biggest(b)
@@ -57,7 +63,7 @@ func main() {
 				n--
 			}
 		}
-		fmt.Println(len(combinations))
+
 	}
 
 }
