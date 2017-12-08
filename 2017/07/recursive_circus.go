@@ -14,7 +14,11 @@ func readFile(filename string) (lines []string) {
 	return
 }
 
-func whosStrange(list []int) (strangeIndex, normal int) {
+// GetStrangeInt returns the index of the strange element and the normal value
+// It assumes there is only one strange element
+// If there is no strange element strangeIndex = -1
+// If the list is empty, both return values are -1
+func GetStrangeInt(list []int) (strangeIndex, normal int) {
 	if len(list) == 0 {
 		return -1, -1
 	}
@@ -47,7 +51,6 @@ type Program struct {
 	Weight          int
 	SubProgramNames []string
 	SubPrograms     []*Program
-	Parent          *Program
 }
 
 func creteProgramFromNote(note string) (p *Program) {
@@ -55,18 +58,19 @@ func creteProgramFromNote(note string) (p *Program) {
 	res := r.FindAllStringSubmatch(note, -1)[0]
 
 	weight, _ := strconv.Atoi(res[2])
+
 	var subs []string
 	if res[4] == "" {
 		subs = make([]string, 0)
 	} else {
 		subs = strings.Split(res[4], ", ")
 	}
-	p = &Program{
+
+	return &Program{
 		Name:            res[1],
 		Weight:          weight,
 		SubProgramNames: subs,
 	}
-	return
 }
 
 func (p Program) getTotalWeight() (totalWeight int) {
@@ -77,34 +81,19 @@ func (p Program) getTotalWeight() (totalWeight int) {
 	return
 }
 
-func (p Program) normalize(newVal int) int {
-	return newVal
-}
-
 func (p Program) balance(targetVal int) (newBalance int) {
-	fmt.Printf("---\nBalancing %+v\n", p)
-	weights := make([]int, len(p.SubPrograms))
+	subWeights := make([]int, len(p.SubPrograms))
 	for i, sub := range p.SubPrograms {
 		w := sub.getTotalWeight()
-		targetVal -= w
-		weights[i] = w
+		targetVal -= w // same as: targetVal -= sum(subWeights)
+		subWeights[i] = w
 	}
-	fmt.Printf("Calculated weights: %+v\n", weights)
-	strangeIdx, normalVal := whosStrange(weights)
-	if strangeIdx >= 0 {
-		fmt.Printf("The strange is %+s\n(index %d)\nthe new val should be %d\n",
-			p.SubPrograms[strangeIdx].Name,
-			strangeIdx,
-			normalVal,
-		)
+
+	strangeIdx, normalVal := GetStrangeInt(subWeights)
+	if strangeIdx != -1 {
 		return p.SubPrograms[strangeIdx].balance(normalVal)
 	}
 	return targetVal
-}
-
-func remove(s []string, i int) []string {
-	s[len(s)-1], s[i] = s[i], s[len(s)-1]
-	return s[:len(s)-1]
 }
 
 func main() {
@@ -134,7 +123,6 @@ func main() {
 	for _, p := range programs {
 		for _, subName := range p.SubProgramNames {
 			sub := programs[subName]
-			sub.Parent = p
 			p.SubPrograms = append(p.SubPrograms, sub)
 		}
 	}
