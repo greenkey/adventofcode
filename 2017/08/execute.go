@@ -49,6 +49,9 @@ func execute(instructions []string, registers map[string]int) {
 			if res[2] == "dec" {
 				registers[res[1]] -= val
 			}
+			if registers[res[1]] > registers["_biggest"] {
+				registers["_biggest"] = registers[res[1]]
+			}
 		}
 	}
 }
@@ -62,11 +65,12 @@ func main() {
 	execute(lines, registers)
 
 	biggestVal := 0
-	for _, v := range registers {
-		if v > biggestVal {
+	for k, v := range registers {
+		if k != "_biggest" && v > biggestVal {
 			biggestVal = v
 		}
 	}
 	fmt.Println(biggestVal)
+	fmt.Println(registers["_biggest"])
 
 }
