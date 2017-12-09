@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func getStreamScore(s string) (score int) {
+func getStreamScore(s string) (score, removed int) {
 	var level int
 	skip := false
 	garbage := false
@@ -18,16 +18,18 @@ func getStreamScore(s string) (score int) {
 
 		if c == '!' {
 			skip = true
+			continue
 		}
 
-		if c == '<' {
-			garbage = true
-		}
 		if c == '>' {
 			garbage = false
 		}
 		if garbage {
+			removed++
 			continue
+		}
+		if c == '<' {
+			garbage = true
 		}
 
 		if c == '{' {
