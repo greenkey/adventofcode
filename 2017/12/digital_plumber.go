@@ -54,4 +54,19 @@ func main() {
 	}
 	fmt.Println(len(*cityMap[0]))
 
+	uniqueItems := make([]*set, 0)
+	for _, item := range cityMap {
+		found := false
+		for _, uniqueItem := range uniqueItems {
+			if uniqueItem == item {
+				found = true
+				break
+			}
+		}
+		if !found {
+			uniqueItems = append(uniqueItems, item)
+		}
+	}
+	fmt.Println(len(uniqueItems))
+
 }
