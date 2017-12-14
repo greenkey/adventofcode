@@ -39,6 +39,48 @@ func KHash(size int, ints []int) (hash int) {
 
 }
 
+func KHashString(s string) string {
+	list := make([]int, 256)
+	for i := range list {
+		list[i] = i
+	}
+	suffix := []rune{17, 31, 73, 47, 23}
+
+	sequence := s + string(suffix)
+
+	var pos, skip int
+	for i := 0; i < 64; i++ {
+		for _, c := range sequence {
+			slice := make([]int, c)
+			for j := 0; j < int(c); j++ {
+				slice[j] = list[(pos+j)%len(list)]
+			}
+
+			for j := 0; j < int(c); j++ {
+				list[(pos+j)%len(list)] = slice[len(slice)-j-1]
+			}
+
+			pos += (int(c) + skip)
+			skip++
+		}
+	}
+
+	denseHash := make([]int, 16)
+	for i := range denseHash {
+		x := i * 16
+		for j := 0; j < 16; j++ {
+			denseHash[i] = denseHash[i] ^ list[x+j]
+		}
+	}
+
+	ret := ""
+	for i := range denseHash {
+		ret += fmt.Sprintf("%02x", denseHash[i])
+	}
+
+	return ret
+}
+
 func main() {
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -51,6 +93,9 @@ func main() {
 			intInts[i], _ = strconv.Atoi(n)
 		}
 		fmt.Println(KHash(256, intInts))
+
+		fmt.Println(KHashString(line))
+
 	}
 
 }
