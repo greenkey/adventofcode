@@ -61,6 +61,26 @@ func hex2bin(hex string) (bin string) {
 	return
 }
 
+func fill(bitmap *[][]rune, x int, y int, filler rune) {
+	bm := *bitmap
+	if bm[x][y] == -1 {
+		bm[x][y] = filler
+
+		if x > 0 {
+			fill(bitmap, x-1, y, filler)
+		}
+		if x < len(bm)-1 {
+			fill(bitmap, x+1, y, filler)
+		}
+		if y > 0 {
+			fill(bitmap, x, y-1, filler)
+		}
+		if y < len(bm[x])-1 {
+			fill(bitmap, x, y+1, filler)
+		}
+	}
+}
+
 func main() {
 
 	testString := "a0c2017"
@@ -76,16 +96,30 @@ func main() {
 		line := scanner.Text()
 
 		sum := 0
+		groups := make([][]rune, 128)
 		for i := 0; i < 128; i++ {
 			s := fmt.Sprintf("%s-%d", line, i)
 			res := hex2bin(KHashString(s))
-			for _, c := range res {
+			groups[i] = []rune(res)
+			for j, c := range res {
+				groups[i][j] = c - 50
 				if c == '1' {
 					sum++
 				}
 			}
 		}
 		fmt.Println(sum)
+
+		groupsNo := 0
+		for i, line := range groups {
+			for j, c := range line {
+				if c == -1 {
+					groupsNo++
+					fill(&groups, i, j, rune(groupsNo))
+				}
+			}
+		}
+		fmt.Println(groupsNo)
 
 	}
 
