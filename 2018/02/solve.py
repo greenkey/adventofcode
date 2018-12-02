@@ -9,12 +9,18 @@ def is_candidate(box_id):
     three = len([letter for letter, count in letter_counts.items() if count == 3])
     return two, three
 
-with open('input') as f:
+def get_checksum(box_list):
     twos = 0
     threes = 0
-    for box in f.readlines():
+    for box in box_list:
         two, three = is_candidate(box)
         twos += bool(two)
         threes += bool(three)
 
-    print(twos*threes)
+    return twos * threes
+
+if __name__ == '__main__':
+    with open('input') as f:
+        box_list = [l for l in f.readlines()]
+    
+    print(get_checksum(box_list))
