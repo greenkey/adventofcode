@@ -43,7 +43,6 @@ field_masks = {
 def validate(doc):
     for field, check in field_masks.items():
         if not check(doc[field]):
-            print(f'{field} is not valid')
             return False
     return True
 
@@ -60,14 +59,10 @@ with open(file_name, 'r') as f:
             data = []
     documents.append({k: v for k, v in document_mask.findall(' '.join(data))})
 
-required_fields = {'byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'}
-
 valid_1 = 0
 valid_2 = 0
 for doc in documents:
-    if required_fields.issubset(doc.keys()):
-        print('='*80)
-        print(doc)
+    if set(field_masks.keys()).issubset(doc.keys()):
         valid_1 += 1
         valid_2 += validate(doc)
 
