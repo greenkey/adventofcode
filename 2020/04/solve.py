@@ -17,7 +17,7 @@ def matches_mask(mask, s):
 
 def validate_height(mask, hgt):
     try:
-        height, mu = mask.findall(doc['hgt'])[0]
+        height, mu = mask.findall(hgt)[0]
     except IndexError:
         return False
 
