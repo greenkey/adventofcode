@@ -9,9 +9,13 @@ with open(file_name, 'r') as f:
 
 data = open(file_name, 'r').read().split('\n\n')
 
-global_count = 0
+first_count = 0
+second_count = 0
 for group in data:
-    count = Counter(group)
-    global_count += len(ascii_lowercase.intersection(count.keys()))
+    count = Counter(group.strip())
+    first_count += len(ascii_lowercase.intersection(count.keys()))
+    group_size = len(group.strip().split('\n'))
+    second_count += len([question for question, yess in count.items() if yess == group_size])
 
-print(global_count)
+print(first_count)
+print(second_count)
