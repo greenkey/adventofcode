@@ -12,8 +12,10 @@ def parse_line(line):
 data = map(parse_line, open(file_name, 'r').readlines())
 
 reverse_tree = defaultdict(dict)
+tree = defaultdict(dict)
 for root, contains in data:
     for n, desc in contains:
+        tree[root][desc] = n
         reverse_tree[desc][root] = n
 
 def can_contain(tree):
@@ -21,4 +23,10 @@ def can_contain(tree):
         yield key
         yield from can_contain(reverse_tree[key])
 
+def count_bags(root, mul=1):
+    for key, val in tree[root].items():
+        yield val * mul
+        yield from count_bags(key, val * mul)
+
 print(len(set(can_contain(reverse_tree['shiny gold']))))
+print(sum(count_bags('shiny gold')))
