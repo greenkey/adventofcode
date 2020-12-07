@@ -1,15 +1,23 @@
 import sys
+from collections import Counter
 
 file_name = sys.argv[1:] or 'input'
 
 start, end = [int(n) for n in open(file_name).read().split('-')]
 
-count = 0
+passwords = set()
 for x in range(start, end + 1):
     sx = str(x)
     if len(set(sx)) == len(sx):
         continue
     if sorted(sx) == list(sx):
-        count += 1
+        passwords.add(x)
 
-print(count)
+print(len(passwords))
+
+for x in sorted(passwords.copy()):
+    counted = Counter(str(x))
+    if not any(c == 2 for c in counted.values()):
+        passwords.remove(x)
+
+print(len(passwords))
