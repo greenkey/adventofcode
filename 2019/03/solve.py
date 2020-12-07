@@ -22,4 +22,21 @@ for w, wire in enumerate(wire_paths):
             pos = tuple(a + b for a, b in zip(pos, direction))
             grid[pos].add(w)
 
-print(min(abs(x) + abs(y) for (x, y), wires in grid.items() if len(wires) > 1))
+intersections = {
+    (x, y) for (x, y), wires in grid.items() if len(wires) > 1
+}
+
+print(min(abs(x) + abs(y) for (x, y) in intersections))
+
+def count_steps(path, destination):
+    steps = 0
+    pos = (0, 0)
+    for step in path:
+        direction = directions[step[0]]
+        for _ in range(int(step[1:])):
+            steps += 1
+            pos = tuple(a + b for a, b in zip(pos, direction))
+            if pos == destination:
+                return steps
+
+print(min(sum(count_steps(path, inter) for path in wire_paths) for inter in intersections))
