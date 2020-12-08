@@ -1,23 +1,41 @@
-code = open('input').readlines()
+initial_code = open('input').readlines()
 
-accumulator = 0
-current_line = 0
-lines_visited = set()
+def run_code(code):
+    accumulator = 0
+    current_line = 0
+    previous_line = None
+    lines_visited = set()
+    exit_status = None
+    while True:
+        if current_line in lines_visited:
+            exit_status = 'loop'
+            break
+        previous_line = current_line
+        lines_visited.add(current_line)
+        try:
+            operation, argument = code[current_line].split()
+        except IndexError:
+            exit_status = 'out_of_code'
+            break
+        argument = int(argument)
 
-while current_line not in lines_visited:
-    lines_visited.add(current_line)
-    operation = code[current_line][:3]
+        accumulator += argument if operation == 'acc' else 0
 
-    if operation == 'nop':
-        current_line += 1
+        current_line += argument if operation == 'jmp' else 1
+    return exit_status, accumulator, previous_line
+
+print(run_code(initial_code)[1])
+
+for i, instruction in enumerate(initial_code):
+    operation, argument = instruction.split()
+    new_code = initial_code[:]
+    if operation == 'jmp':
+        new_code[i] = f'nop {argument}'
+    elif operation == 'nop':
+        new_code[i] = f'jmp {argument}'
+    else:
         continue
-    argument = int(code[current_line][4:])
-    if operation == 'acc':
-        accumulator += argument
-        current_line += 1
-        continue
-    elif operation == 'jmp':
-        current_line += argument
-        continue
-
-print(accumulator)
+    exit_status, accumulator, previous_line = run_code(new_code)
+    if exit_status == 'out_of_code':
+        print(accumulator)
+        break
