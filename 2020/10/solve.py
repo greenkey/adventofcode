@@ -2,7 +2,7 @@ import re
 import sys
 from collections import Counter
 from functools import lru_cache, reduce
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Optional
 
 
 def solve(input_file: str):
@@ -15,10 +15,8 @@ def solve(input_file: str):
     diff_count = Counter(diffs)
     print(diff_count[1] * diff_count[3])
 
-    print(count_arrangements("".join(str(x) for x in diffs)))
-
-
-seen_combinations = dict()
+    s_diffs = "".join(str(x) for x in diffs)
+    print(count_arrangements(s_diffs))
 
 
 def count_arrangements(diffs: str) -> int:
@@ -30,17 +28,13 @@ def count_arrangements(diffs: str) -> int:
             lambda x, y: x * y, [count_arrangements(part) for part in diffs.split("3")]
         )
 
-    try:
-        return seen_combinations[diffs]
-    except KeyError:
-        count = 0
-        if diffs[:2] in ("21", "12"):
-            count += count_arrangements("3" + diffs[2:])
-        if diffs[:2] in ("11"):
-            count += count_arrangements("2" + diffs[2:])
-        count += count_arrangements(diffs[1:])
-        seen_combinations[diffs] = count
-        return count
+    count = 0
+    if diffs[:2] in ("21", "12"):
+        count += count_arrangements(diffs[2:])
+    if diffs[:2] in ("11"):
+        count += count_arrangements("2" + diffs[2:])
+    count += count_arrangements(diffs[1:])
+    return count
 
 
 def test_count_arrangements():
