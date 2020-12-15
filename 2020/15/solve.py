@@ -37,6 +37,8 @@ def solve(file_name: str):
     nums: List[int] = [int(x) for x in open(file_name).read().split(",")]
     print(elf_memory(nums, 2020))
 
+    print(elf_memory(nums, 30000000))
+
 
 if __name__ == "__main__":
     solve(sys.argv[1] if len(sys.argv) > 1 else "input")
