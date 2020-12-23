@@ -11,7 +11,10 @@ def iter_linked_list(ll, start, count=None):
 def crab_game(cups, times, current_cup):
     greatest = max(cups.keys())
     for i in range(times):
-        pick_up = list(iter_linked_list(cups, current_cup, 4))[1:]
+        pick_up1 = cups[current_cup]
+        pick_up2 = cups[pick_up1]
+        pick_up3 = cups[pick_up2]
+        pick_up = [pick_up1, pick_up2, pick_up3]
 
         destination = current_cup
         while True:
@@ -21,10 +24,10 @@ def crab_game(cups, times, current_cup):
             if destination in pick_up:
                 continue
             break
-        cups[current_cup] = cups[pick_up[-1]]
-        current_cup = cups[pick_up[-1]]
-        cups[pick_up[-1]] = cups[destination]
-        cups[destination] = pick_up[0]
+        cups[current_cup] = cups[pick_up3]
+        current_cup = cups[pick_up3]
+        cups[pick_up3] = cups[destination]
+        cups[destination] = pick_up1
 
     return cups
 
