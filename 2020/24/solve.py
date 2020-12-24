@@ -2,8 +2,18 @@ import sys
 from collections import Counter, defaultdict
 
 
+STEP_TO_XY = {
+    'ne': (1, 1),
+    'e': (2, 0),
+    'se': (1, -1),
+    'sw': (-1, -1),
+    'w': (-2, 0),
+    'nw': (-1, 1),
+}
+
+
 def path_to_xy(path):
-    counter = defaultdict(int)
+    x, y = 0, 0
     prev = None
     for c in path:
         if c in 'ns':
@@ -11,34 +21,28 @@ def path_to_xy(path):
             continue
         elif c in 'we':
             if prev:
-                counter[prev+c] += 1
+                dx, dy = STEP_TO_XY[prev+c]
                 prev = None
             else:
-                counter[c] += 1
-    counter['ne'] -= counter['sw']; del counter['sw']
-    counter['se'] -= counter['nw']; del counter['nw']
-    counter['e'] -= counter['w']; del counter['w']
-    ne, e, se = counter['ne'], counter['e'], counter['se']
-    x = e * 2 + se + ne
-    y = ne - se
+                dx, dy = STEP_TO_XY[c]
+            x += dx
+            y += dy
     return x, y
 
 
+ADJ_POS = ((2, 0), (1, -1), (-1, -1), (-2, 0), (-1, 1), (1, 1))
+
+
 def apply_flip_rules(tiles, life=(2,), death=(0, 3, 4, 5, 6)):
-    adj_pos = ((2, 0), (1, -1), (-1, -1), (-2, 0), (-1, 1), (1, 1))
     new_tiles = set(tiles)
-    board = tiles | {(x + ax, y + ay) for ax, ay in adj_pos for x, y in tiles}
+    board = tiles | {(x + ax, y + ay) for ax, ay in ADJ_POS for x, y in tiles}
     for x, y in board:
-        adjacents = {(x + ax, y + ay) for ax, ay in adj_pos if (x + ax, y + ay) in tiles}
-        if (x, y) in tiles and len(adjacents) in death:
+        adjacent = len([(x + ax, y + ay) for ax, ay in ADJ_POS if (x + ax, y + ay) in tiles])
+        if (x, y) in tiles and adjacent in death:
             new_tiles.remove((x, y))
-        elif (x, y) not in tiles and len(adjacents) in life:
+        elif (x, y) not in tiles and adjacent in life:
             new_tiles.add((x, y))
     return new_tiles
-
-
-def test_flip_rules():
-    assert apply_flip_rules({(1, 1), (2, 0)}) == {(1, 1), (2, 0), (0, 0)}
 
 
 def solve(file_name: str):
@@ -48,8 +52,8 @@ def solve(file_name: str):
 
     for i in range(100):
         blacks = apply_flip_rules(blacks)
-
     print(len(blacks))
+
 
 if __name__ == "__main__":
     solve(sys.argv[1] if len(sys.argv) > 1 else "input")
