@@ -1,21 +1,19 @@
-from sys import stdin
 from functools import reduce
+from sys import stdin
+from typing import Iterable
 
 nums = list(map(int, stdin))
 
-prev = None
-increases = 0
-for num in nums:
-    if prev is not None:
-        increases += num > prev
-    prev = num
-print(increases)
 
-prev = None
-increases = 0
-for i in range(len(nums)-2):
-    s = sum(nums[i:i+3])
-    if prev is not None:
-        increases += s > prev
-    prev = s
-print(increases)
+def get_increases(nums: Iterable[int]) -> int:
+    prev = None
+    increases = 0
+    for num in nums:
+        if prev is not None:
+            increases += num > prev
+        prev = num
+    return increases
+
+
+print(get_increases(nums))
+print(get_increases([sum(nums[i:i+3]) for i in range(len(nums)-2)]))
