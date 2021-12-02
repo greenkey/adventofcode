@@ -1,5 +1,8 @@
 from sys import stdin
-import sys; print(sys.version)
+
+import sys
+print(sys.version)
+
 
 class Day02:
     @staticmethod
@@ -42,6 +45,7 @@ class Day02:
             elif direction == "up":
                 aim -= int(n)
         return horizontal * depth
+
 
 if __name__ == "__main__":
     data = stdin.read()
