@@ -1,5 +1,5 @@
-from typing import Iterable
 from sys import stdin
+from typing import Iterable
 
 
 class Day:
@@ -27,12 +27,12 @@ class Day:
         oxygen = int(cls.oxygen(lines), 2)
         co2 = int(cls.co2(lines), 2)
         return oxygen * co2
-        
+
     @classmethod
     def oxygen(cls, lines: list[str]) -> str:
         if len(lines) == 1:
             return lines[0]
-        splitted = {"0": [], "1": []}
+        splitted: dict[str, list[str]] = {"0": [], "1": []}
         for line in lines:
             splitted[line[0]].append(line[1:])
         c = str(int(len(splitted["0"]) <= len(splitted["1"])))
@@ -42,11 +42,12 @@ class Day:
     def co2(cls, lines: list[str]) -> str:
         if len(lines) == 1:
             return lines[0]
-        splitted = {"0": [], "1": []}
+        splitted: dict[str, list[str]] = {"0": [], "1": []}
         for line in lines:
             splitted[line[0]].append(line[1:])
         c = str(int(len(splitted["0"]) > len(splitted["1"])))
         return c + cls.co2(splitted[c])
+
 
 if __name__ == "__main__":
     data = stdin.read()
