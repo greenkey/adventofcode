@@ -20,11 +20,11 @@ def test_case_1():
 
 
 def test_oxygen():
-    assert Day.oxygen(data.splitlines()) == "10111"
+    assert Day.extract(data.splitlines(), "oxygen") == "10111"
 
 
 def test_co2():
-    assert Day.co2(data.splitlines()) == "01010"
+    assert Day.extract(data.splitlines(), "co2") == "01010"
 
 
 def test_case_2():

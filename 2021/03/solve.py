@@ -24,29 +24,22 @@ class Day:
     @classmethod
     def solve2(cls, data: str) -> int:
         lines = data.splitlines()
-        oxygen = int(cls.oxygen(lines), 2)
-        co2 = int(cls.co2(lines), 2)
+        oxygen = int(cls.extract(lines, "oxygen"), 2)
+        co2 = int(cls.extract(lines, "co2"), 2)
         return oxygen * co2
 
     @classmethod
-    def oxygen(cls, lines: list[str]) -> str:
+    def extract(cls, lines: list[str], what: str) -> str:
         if len(lines) == 1:
             return lines[0]
         splitted: dict[str, list[str]] = {"0": [], "1": []}
         for line in lines:
             splitted[line[0]].append(line[1:])
-        c = str(int(len(splitted["0"]) <= len(splitted["1"])))
-        return c + cls.oxygen(splitted[c])
-
-    @classmethod
-    def co2(cls, lines: list[str]) -> str:
-        if len(lines) == 1:
-            return lines[0]
-        splitted: dict[str, list[str]] = {"0": [], "1": []}
-        for line in lines:
-            splitted[line[0]].append(line[1:])
-        c = str(int(len(splitted["0"]) > len(splitted["1"])))
-        return c + cls.co2(splitted[c])
+        if what == "co2":
+            c = str(int(len(splitted["0"]) > len(splitted["1"])))
+        elif what == "oxygen":
+            c = str(int(len(splitted["0"]) <= len(splitted["1"])))
+        return c + cls.extract(splitted[c], what)
 
 
 if __name__ == "__main__":
