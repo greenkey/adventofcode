@@ -6,8 +6,10 @@ class Board:
     def __init__(self, data: str):
         self.lines: List[Set[str]] = []
         items = [l.split() for l in data.splitlines()]
-        trans = [[items[j][i] for j in range(len(items))] for i in range(len(items[0]))]
-        self.lines = [set(l) for l in items] + [set(c) for c in trans]
+        transposed = [
+            [items[j][i] for j in range(len(items))] for i in range(len(items[0]))
+        ]
+        self.lines = [set(l) for l in items] + [set(c) for c in transposed]
 
     def all_numbers(self) -> Set[str]:
         s: Set[str] = set()
