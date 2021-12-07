@@ -14,3 +14,7 @@ data = """0,9 -> 5,9
 
 def test_case_1():
     assert Day(data).solve1() == 5
+
+
+def test_case_2():
+    assert Day(data).solve2() == 12
