@@ -24,7 +24,10 @@ if __name__ == "__main__":
     from sys import argv
 
     year = "2022"
-    day = f"0{argv[1]}"[-2:]
+    if len(argv) < 2:
+        day = f"0{input('day:')}"[-2:]
+    else:
+        day = f"0{argv[1]}"[-2:]
     puzzle = Puzzle(year=2022, day=int(day))
     print(f"{puzzle.year}/{puzzle.day}: {puzzle.title}")
 
@@ -47,6 +50,9 @@ if __name__ == "__main__":
     # solve a
     if not puzzle.answered_a:
         puzzle.answer_a = s.solve_a()
+    else:
+        # regression test
+        assert puzzle.answer_a == str(s.solve_a()), (puzzle.answer_a, str(s.solve_a()))
     print(f"A: {puzzle.answer_a}, rank={puzzle.my_stats['a']['rank']}")
 
     # test b
@@ -55,4 +61,7 @@ if __name__ == "__main__":
     # solve b
     if not puzzle.answered_b:
         puzzle.answer_b = s.solve_b()
+    else:
+        # regression test
+        assert puzzle.answer_b == str(s.solve_b()), (puzzle.answer_b, str(s.solve_b()))
     print(f"B: {puzzle.answer_b}, rank={puzzle.my_stats['b']['rank']}")
