@@ -1,25 +1,5 @@
 from aocd.models import Puzzle
 
-
-class Solution:
-    def __init__(self, data):
-        self.data = data
-
-    @property
-    def answer_example_a(self):
-        raise NotImplementedError
-
-    @property
-    def answer_example_b(self):
-        raise NotImplementedError
-
-    def solve_a(self):
-        raise NotImplementedError
-
-    def solve_b(self):
-        raise NotImplementedError
-
-
 if __name__ == "__main__":
     from sys import argv
 
@@ -41,27 +21,26 @@ if __name__ == "__main__":
             continue
         fun()
 
-    e = m.Solution(puzzle.example_data)
-    s = m.Solution(puzzle.input_data)
-
     # test a
-    assert e.solve_a() == e.answer_example_a
+    assert m.solve_a(puzzle.example_data) == m.answer_example_a
 
     # solve a
     if not puzzle.answered_a:
-        puzzle.answer_a = s.solve_a()
+        puzzle.answer_a = m.solve_a(puzzle.input_data)
     else:
         # regression test
-        assert puzzle.answer_a == str(s.solve_a()), (puzzle.answer_a, str(s.solve_a()))
+        answer = str(m.solve_a(puzzle.input_data))
+        assert puzzle.answer_a == answer, (puzzle.answer_a, answer)
     print(f"A: {puzzle.answer_a}, rank={puzzle.my_stats['a']['rank']}")
 
     # test b
-    assert e.solve_b() == e.answer_example_b
+    assert m.solve_b(puzzle.example_data) == m.answer_example_b
 
     # solve b
     if not puzzle.answered_b:
-        puzzle.answer_b = s.solve_b()
+        puzzle.answer_b = m.solve_b(puzzle.input_data)
     else:
         # regression test
-        assert puzzle.answer_b == str(s.solve_b()), (puzzle.answer_b, str(s.solve_b()))
-    print(f"B: {puzzle.answer_b}, rank={puzzle.my_stats['b']['rank']}")
+        answer = str(m.solve_b(puzzle.input_data))
+        assert puzzle.answer_b == answer, (puzzle.answer_b, answer)
+    print(f"A: {puzzle.answer_b}, rank={puzzle.my_stats['b']['rank']}")
