@@ -24,3 +24,7 @@ def solve_b(data):
         dups.append((a & b & c).pop())
 
     return sum([ascii_letters.find(c) + 1 for c in dups])
+
+
+if __name__ == "__main__":
+    solve.main(2022, 3)

@@ -1,17 +1,11 @@
 from aocd.models import Puzzle
 
-if __name__ == "__main__":
-    from sys import argv
 
-    year = "2022"
-    if len(argv) < 2:
-        day = f"0{input('day:')}"[-2:]
-    else:
-        day = f"0{argv[1]}"[-2:]
-    puzzle = Puzzle(year=2022, day=int(day))
+def main(year, day):
+    puzzle = Puzzle(year=year, day=day)
     print(f"{puzzle.year}/{puzzle.day}: {puzzle.title}")
 
-    m = __import__(f"solve_{day}")
+    m = __import__(f"solve_{day:02}")
 
     # test module
     for attr_name in m.__dict__:
@@ -44,3 +38,15 @@ if __name__ == "__main__":
         answer = str(m.solve_b(puzzle.input_data))
         assert puzzle.answer_b == answer, (puzzle.answer_b, answer)
     print(f"A: {puzzle.answer_b}, rank={puzzle.my_stats['b']['rank']}")
+
+
+if __name__ == "__main__":
+    from sys import argv
+
+    year = "2022"
+    if len(argv) < 2:
+        day = input("day:")
+    else:
+        day = argv[1]
+
+    main(year, int(day))
