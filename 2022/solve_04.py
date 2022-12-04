@@ -3,7 +3,7 @@ from string import ascii_letters
 import solve
 
 answer_example_a = 2
-answer_example_b = None
+answer_example_b = 4
 
 
 def solve_a(data):
@@ -20,7 +20,20 @@ def solve_a(data):
 
 
 def solve_b(data):
-    return None
+    count = 0
+    for line in data.splitlines():
+        (a_start, a_end), (b_start, b_end) = [
+            [int(x) for x in range.split("-")] for range in line.split(",")
+        ]
+        if b_start <= a_start <= b_end:
+            count += 1
+        elif b_start <= a_end <= b_end:
+            count += 1
+        elif a_start <= b_end <= a_end:
+            count += 1
+        elif a_start <= b_start <= a_end:
+            count += 1
+    return count
 
 
 def test_overlap():
