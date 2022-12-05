@@ -16,7 +16,9 @@ def main(year, day):
         fun()
 
     # test a
-    assert m.solve_a(puzzle.example_data) == m.answer_example_a
+    assert (
+        m.solve_a(puzzle.example_data) == m.answer_example_a
+    ), f"expecting {m.answer_example_a}, got {m.solve_a(puzzle.example_data)}"
 
     # solve a
     if not puzzle.answered_a:
@@ -28,7 +30,9 @@ def main(year, day):
     print(f"A: {puzzle.answer_a}, rank={puzzle.my_stats['a']['rank']}")
 
     # test b
-    assert m.solve_b(puzzle.example_data) == m.answer_example_b
+    assert (
+        m.solve_b(puzzle.example_data) == m.answer_example_b
+    ), f"expecting {m.answer_example_b}, got {m.solve_b(puzzle.example_data)}"
 
     # solve b
     if not puzzle.answered_b:
