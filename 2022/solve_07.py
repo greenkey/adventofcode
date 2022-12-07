@@ -3,7 +3,7 @@ from collections import defaultdict
 import solve
 
 answer_example_a = 95437
-answer_example_b = None
+answer_example_b = 24933642
 example_data = """$ cd /
 $ ls
 dir a
@@ -32,51 +32,35 @@ $ ls
 
 class FS:
     def __init__(self):
-        self.root = {"*meta": {"type": "d"}}
-        self.cwd = self.root
+        self.sizes = defaultdict(int)
 
-    def cd(self, dir):
-        match dir:
-            case "/":
-                self.cwd = self.root
-            case _:
-                if dir not in self.cwd:
-                    self.cwd[dir] = {"..": self.cwd, "*meta": {"type": "d"}}
-                self.cwd = self.cwd[dir]
+    def parse(self, data):
+        cwd = tuple()
+        for line in data.splitlines():
+            match line.split():
+                case "$", "cd", "..":
+                    cwd = cwd[:-1]
+                case "$", "cd", dir:
+                    cwd = cwd + (dir,)
+                case "$", "ls":
+                    pass
+                case "dir", dir:
+                    pass
+                case size, _:
+                    self.sizes[cwd] += int(size)
+        other = self.sizes.copy()
+        for dir, size in other.items():
+            while dir:
+                dir = dir[:-1]
+                self.sizes[dir] += size
 
-    def touch(self, name, size):
-        self.cwd[name] = {"*meta": {"size": int(size), "type": "f"}}
-
-    def du(self, dir=None):
-        dir = dir or self.root
-        cur_size = 0
-        for name, item in dir.items():
-            if name.startswith("*"):
-                continue
-            if name == "..":
-                continue
-            match (meta := item["*meta"])["type"]:
-                case "d":
-                    for size in self.du(dir=item):
-                        yield size
-                        cur_size += size
-                case "f":
-                    cur_size += meta["size"]
-        yield cur_size
+    def du(self):
+        return list(self.sizes.values())
 
 
 def solve_a(data):
     fs = FS()
-    for line in data.splitlines():
-        match line.split():
-            case "$", "cd", dir:
-                fs.cd(dir)
-            case "$", "ls":
-                pass
-            case "dir", dir:
-                pass
-            case size, name:
-                fs.touch(name, int(size))
+    fs.parse(data)
 
     total_size = 0
     for size in fs.du():
@@ -87,7 +71,20 @@ def solve_a(data):
 
 
 def solve_b(data):
-    return None
+    fs = FS()
+    fs.parse(data)
+
+    storage_size = 70_000_000
+    space_needed = 30_000_000
+
+    sizes = list(fs.du())
+    used_space = max(sizes)
+    assert storage_size >= used_space
+
+    unused = storage_size - used_space
+    to_free = space_needed - unused
+
+    return min(size for size in sizes if size >= to_free)
 
 
 if __name__ == "__main__":
