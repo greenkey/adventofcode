@@ -1,3 +1,5 @@
+import os
+
 from aocd.models import Puzzle
 
 
@@ -10,6 +12,11 @@ def main(year, day):
         example_data = m.example_data
     else:
         example_data = p.example_data
+
+    try:
+        input_data = open(f"input_{day:02}").read()
+    except FileNotFoundError:
+        input_data = puzzle.input_data
 
     # test module
     for attr_name in m.__dict__:
