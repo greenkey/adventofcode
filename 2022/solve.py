@@ -6,6 +6,10 @@ def main(year, day):
     print(f"{puzzle.year}/{puzzle.day}: {puzzle.title}")
 
     m = __import__(f"solve_{day:02}")
+    if hasattr(m, "example_data"):
+        example_data = m.example_data
+    else:
+        example_data = p.example_data
 
     # test module
     for attr_name in m.__dict__:
@@ -17,8 +21,8 @@ def main(year, day):
 
     # test a
     assert (
-        m.solve_a(puzzle.example_data) == m.answer_example_a
-    ), f"expecting {m.answer_example_a}, got {m.solve_a(puzzle.example_data)}"
+        m.solve_a(example_data) == m.answer_example_a
+    ), f"expecting {m.answer_example_a}, got {m.solve_a(example_data)}"
 
     # solve a
     if not puzzle.answered_a:
@@ -31,8 +35,8 @@ def main(year, day):
 
     # test b
     assert (
-        m.solve_b(puzzle.example_data) == m.answer_example_b
-    ), f"expecting {m.answer_example_b}, got {m.solve_b(puzzle.example_data)}"
+        m.solve_b(example_data) == m.answer_example_b
+    ), f"expecting {m.answer_example_b}, got {m.solve_b(example_data)}"
 
     # solve b
     if not puzzle.answered_b:
