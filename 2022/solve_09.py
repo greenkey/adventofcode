@@ -1,7 +1,7 @@
 import solve
 
 answer_example_a = 13
-answer_example_b = None
+answer_example_b = 1
 example_data = """R 4
 U 4
 L 3
@@ -45,6 +45,14 @@ def follow(from_p, to_p):
             return x2, y2 - 1
         case (-2, -1) | (-2, 1):
             return x2 - 1, y2
+        case (-2, -2):
+            return x2 - 1, y2 - 1
+        case (2, 2):
+            return x2 + 1, y2 + 1
+        case (2, -2):
+            return x2 + 1, y2 - 1
+        case (-2, 2):
+            return x2 - 1, y2 + 1
     return from_p
 
 
@@ -64,7 +72,34 @@ def solve_a(data):
 
 
 def solve_b(data):
-    return None
+    # 0 = H, -1 = T
+    rope = [(0, 0)] * 10
+    positions = {rope[-1]}
+
+    instructions = (line.split() for line in data.splitlines())
+
+    for dir, steps in instructions:
+        for _ in range(int(steps)):
+            rope[0] = move(rope[0], dir)
+            for i in range(9):
+                rope[i + 1] = follow(rope[i + 1], rope[i])
+            positions.add(rope[-1])
+
+    return len(positions)
+
+
+def test_b():
+    data = """R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20
+"""
+    result = solve_b(data)
+    assert result == 36, result
 
 
 if __name__ == "__main__":
