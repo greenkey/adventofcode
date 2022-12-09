@@ -29,31 +29,26 @@ def move(p, dir):
 def follow(from_p, to_p):
     x1, y1 = from_p
     x2, y2 = to_p
-    if x1 == x2:
-        if abs(y1 - y2) == 2:
-            return x1, (y1 + y2) // 2
-    if y1 == y2:
-        if abs(x1 - x2) == 2:
-            return (x1 + x2) // 2, y1
 
-    match x1 - x2, y1 - y2:
-        case (-1, 2) | (1, 2):
-            return x2, y2 + 1
-        case (2, -1) | (2, 1):
-            return x2 + 1, y2
-        case (-1, -2) | (1, -2):
-            return x2, y2 - 1
-        case (-2, -1) | (-2, 1):
-            return x2 - 1, y2
-        case (-2, -2):
-            return x2 - 1, y2 - 1
-        case (2, 2):
-            return x2 + 1, y2 + 1
-        case (2, -2):
-            return x2 + 1, y2 - 1
-        case (-2, 2):
-            return x2 - 1, y2 + 1
-    return from_p
+    # first analyze "horse position"
+    if (abs(x1 - x2) + abs(y1 - y2)) == 3:
+        match x1 - x2, y1 - y2:
+            case (-1, 2) | (1, 2):
+                return x2, y2 + 1
+            case (2, -1) | (2, 1):
+                return x2 + 1, y2
+            case (-1, -2) | (1, -2):
+                return x2, y2 - 1
+            case (-2, -1) | (-2, 1):
+                return x2 - 1, y2
+
+    # in all the other cases we only need to reduce the coordinate diff from 2 to 1
+    new_x, new_y = from_p
+    if abs(y1 - y2) == 2:
+        new_y = (y1 + y2) // 2
+    if abs(x1 - x2) == 2:
+        new_x = (x1 + x2) // 2
+    return new_x, new_y
 
 
 def solve_a(data):
