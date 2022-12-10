@@ -1,3 +1,5 @@
+from time import sleep
+
 import solve
 
 answer_example_a = 13140
@@ -171,7 +173,7 @@ class Screen:
                     self.x_change[i] = int(n)
             i += 1
 
-    def cycle(self, n: int):
+    def cycle(self, n: int, show: bool = False):
         if n == self.END:
             n = max(self.x_change.keys()) + 10
         for _ in range(n):
@@ -183,14 +185,16 @@ class Screen:
                 done = f"nothing happened"
             self.draw()
             self.pointer += 1
+            if show:
+                self.show()
+                sleep(0.05)
 
     def draw(self):
         if self.pointer % 40 in (self.x - 1, self.x, self.x + 1):
             self.pixels[self.pointer] = 1
 
     def show(self):
-        pixels = "".join("#" if x else "." for x in self.pixels)
-        print(self.pixels)
+        pixels = "".join("\u2588" if x else " " for x in self.pixels)
         print("-" * 40)
         print(pixels[0:40])
         print(pixels[40:80])
@@ -215,8 +219,8 @@ def solve_a(data):
 
 def solve_b(data):
     screen = Screen(data)
-    screen.cycle(screen.END)
-    screen.show()
+    screen.cycle(screen.END, show=True)
+    # screen.show()
 
 
 def test_simple():
