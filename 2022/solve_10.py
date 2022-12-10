@@ -152,9 +152,12 @@ noop
 
 
 class Screen:
+    END = -1
+
     def __init__(self, data):
         self.x = 1
         self.pointer = 0
+        self.pixels = [0] * 241
 
         self.x_change = {}
         i = 1
@@ -169,12 +172,33 @@ class Screen:
             i += 1
 
     def cycle(self, n: int):
+        if n == self.END:
+            n = max(self.x_change.keys()) + 10
         for _ in range(n):
+            done = ""
             if x_change := self.x_change.get(self.pointer):
                 self.x += x_change
+                done = f"finish executing addx {x_change} (Register X is now {self.x})"
             else:
-                pass
+                done = f"nothing happened"
+            self.draw()
             self.pointer += 1
+
+    def draw(self):
+        if self.pointer % 40 in (self.x - 1, self.x, self.x + 1):
+            self.pixels[self.pointer] = 1
+
+    def show(self):
+        pixels = "".join("#" if x else "." for x in self.pixels)
+        print(self.pixels)
+        print("-" * 40)
+        print(pixels[0:40])
+        print(pixels[40:80])
+        print(pixels[80:120])
+        print(pixels[120:160])
+        print(pixels[160:200])
+        print(pixels[200:240])
+        print("-" * 40)
 
 
 def solve_a(data):
@@ -190,7 +214,9 @@ def solve_a(data):
 
 
 def solve_b(data):
-    return None
+    screen = Screen(data)
+    screen.cycle(screen.END)
+    screen.show()
 
 
 def test_simple():
