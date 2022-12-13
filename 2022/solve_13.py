@@ -1,7 +1,9 @@
+from functools import cmp_to_key
+
 import solve
 
 answer_example_a = 13
-answer_example_b = None
+answer_example_b = 140
 
 
 def parse(data):
@@ -36,7 +38,15 @@ def solve_a(data):
 
 
 def solve_b(data):
-    return None
+    dividers = ["[[2]]", "[[6]]"]
+    data_lines = data.splitlines() + dividers
+    data = [l for l in data_lines if l]
+    sorted_data = sorted(map(eval, data), key=cmp_to_key(mysort))
+    lines = [str(l) for l in sorted_data]
+    result = 1
+    for d in dividers:
+        result *= lines.index(d) + 1
+    return result
 
 
 if __name__ == "__main__":
