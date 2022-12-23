@@ -18,10 +18,10 @@ class ElvesMap:
         "W": ((-1, -1), (-1, 0), (-1, 1)),
         "E": ((1, -1), (1, 0), (1, 1)),
     }
-    dir_order = deque("NSWE")
 
     def __init__(self, data: str):
         self.elves = set()
+        self.dir_order = deque("NSWE")
         for y, line in enumerate(data.splitlines()):
             for x, val in enumerate(line):
                 if val == "#":
@@ -87,17 +87,17 @@ class ElvesMap:
         return dict((k, v) for k, v in next_positions.items() if v)
 
     def move(self, moves: dict):
-        try:
-            newpos, oldpos = zip(*moves.items())
-        except ValueError:
+        if not moves:
             return False
+
+        newpos, oldpos = zip(*moves.items())
         self.elves.difference_update(oldpos)
         self.elves.update(newpos)
         return True
 
     def run(self, n=None, animation=False):
         if n:
-            check = lambda: self.rounds < n - 1
+            check = lambda: self.rounds < n
         else:
             check = lambda: True
 
@@ -106,7 +106,7 @@ class ElvesMap:
             print(f"round={self.rounds}", end="\r")
             moves = self.propose_moves()
 
-            self.print(animation, moves=moves.keys())
+            # self.print(animation, moves=moves.keys())
 
             if not self.move(moves):
                 break
@@ -117,9 +117,148 @@ class ElvesMap:
         return self.rounds
 
 
+def test_move_for_elf():
+    elves = ElvesMap("\n".join(["...", ".#.", "..."]))
+    assert elves.move_for_elf((1, 1)) == None
+
+    elves = ElvesMap("\n".join(["#..", ".#.", "..."]))
+    assert elves.move_for_elf((1, 1)) == (1, 2)
+
+    elves = ElvesMap("\n".join([".#.", ".#.", "..."]))
+    assert elves.move_for_elf((1, 1)) == (1, 2)
+
+    elves = ElvesMap("\n".join(["..#", ".#.", "..."]))
+    assert elves.move_for_elf((1, 1)) == (1, 2)
+
+    elves = ElvesMap("\n".join(["...", "##.", "..."]))
+    assert elves.move_for_elf((1, 1)) == (1, 0)
+
+    elves = ElvesMap("\n".join(["...", ".##", "..."]))
+    assert elves.move_for_elf((1, 1)) == (1, 0)
+
+    elves = ElvesMap("\n".join(["...", ".#.", "#.."]))
+    assert elves.move_for_elf((1, 1)) == (1, 0)
+
+    elves = ElvesMap("\n".join(["...", ".#.", ".#."]))
+    assert elves.move_for_elf((1, 1)) == (1, 0)
+
+    elves = ElvesMap("\n".join(["...", ".#.", "..#"]))
+    assert elves.move_for_elf((1, 1)) == (1, 0)
+
+    elves = ElvesMap("\n".join(["#..", ".#.", "..#"]))
+    assert elves.move_for_elf((1, 1)) == None
+
+    elves = ElvesMap("\n".join(["#.#", ".#.", "..."]))
+    assert elves.move_for_elf((1, 1)) == (1, 2)
+
+    elves = ElvesMap("\n".join(["#..", ".#.", "#.."]))
+    assert elves.move_for_elf((1, 1)) == (2, 1)
+
+    elves = ElvesMap("\n".join(["..#", ".#.", "..#"]))
+    assert elves.move_for_elf((1, 1)) == (0, 1)
+
+
+def test_propose_moves():
+    elves = ElvesMap("\n".join(["...", ".#.", "..."]))
+    assert elves.propose_moves() == {}
+
+    elves = ElvesMap("\n".join(["#..", ".#.", "..."]))
+    assert elves.propose_moves() == {
+        (0, -1): (0, 0),
+        (1, 2): (1, 1),
+    }
+
+    elves = ElvesMap("\n".join([".#.", ".#.", "..."]))
+    assert elves.propose_moves() == {
+        (1, -1): (1, 0),
+        (1, 2): (1, 1),
+    }
+
+    elves = ElvesMap("\n".join(["..#", ".#.", "..."]))
+    assert elves.propose_moves() == {
+        (2, -1): (2, 0),
+        (1, 2): (1, 1),
+    }
+
+    elves = ElvesMap("\n".join(["...", "##.", "..."]))
+    assert elves.propose_moves() == {
+        (0, 0): (0, 1),
+        (1, 0): (1, 1),
+    }
+
+    elves = ElvesMap("\n".join(["...", ".##", "..."]))
+    assert elves.propose_moves() == {
+        (2, 0): (2, 1),
+        (1, 0): (1, 1),
+    }
+
+    elves = ElvesMap("\n".join(["...", ".#.", "#.."]))
+    assert elves.propose_moves() == {
+        (1, 0): (1, 1),
+        (0, 3): (0, 2),
+    }
+
+    elves = ElvesMap("\n".join(["...", ".#.", ".#."]))
+    assert elves.propose_moves() == {
+        (1, 0): (1, 1),
+        (1, 3): (1, 2),
+    }
+
+    elves = ElvesMap("\n".join(["...", ".#.", "..#"]))
+    assert elves.propose_moves() == {
+        (1, 0): (1, 1),
+        (2, 3): (2, 2),
+    }
+
+    elves = ElvesMap("\n".join(["#..", ".#.", "..#"]))
+    assert elves.propose_moves() == {
+        (0, -1): (0, 0),
+        (2, 3): (2, 2),
+    }
+
+    elves = ElvesMap("\n".join(["#.#", ".#.", "..."]))
+    assert elves.propose_moves() == {
+        (0, -1): (0, 0),
+        (2, -1): (2, 0),
+        (1, 2): (1, 1),
+    }
+
+    elves = ElvesMap("\n".join(["#..", ".#.", "#.."]))
+    assert elves.propose_moves() == {
+        (0, -1): (0, 0),
+        (2, 1): (1, 1),
+        (0, 3): (0, 2),
+    }
+
+    elves = ElvesMap("\n".join(["..#", ".#.", "..#"]))
+    assert elves.propose_moves() == {
+        (2, -1): (2, 0),
+        (0, 1): (1, 1),
+        (2, 3): (2, 2),
+    }
+
+    elves = ElvesMap("##")
+    assert elves.propose_moves() == {
+        (0, -1): (0, 0),
+        (1, -1): (1, 0),
+    }
+
+    elves = ElvesMap("\n".join(["###", "###", "###"]))
+    assert elves.propose_moves() == {
+        (0, -1): (0, 0),
+        (1, -1): (1, 0),
+        (2, -1): (2, 0),
+        (-1, 1): (0, 1),
+        (3, 1): (2, 1),
+        (0, 3): (0, 2),
+        (1, 3): (1, 2),
+        (2, 3): (2, 2),
+    }
+
+
 def solve_a(data: str):
     elves = ElvesMap(data)
-    elves.run(n=10, animation=0.1)
+    elves.run(n=10, animation=None)
 
     (minx, miny), (maxx, maxy) = elves.get_boundaries()
     places = (abs(maxx - minx) + 1) * (abs(maxy - miny) + 1)
@@ -128,19 +267,26 @@ def solve_a(data: str):
 
 
 def test_b():
-    data = """.....
-..##.
-..#..
-.....
-..##.
-.....
-"""
+    data = "\n".join(
+        [
+            ".....",
+            "..##.",
+            "..#..",
+            ".....",
+            "..##.",
+            ".....",
+        ]
+    )
     assert solve_b(data) == 4
+
+    assert solve_b("#") == 1
+
+    assert solve_b("##") == 4
 
 
 def solve_b(data):
     elves = ElvesMap(data)
-    last_round = elves.run()
+    last_round = elves.run(animation=None)
     return last_round
 
 
