@@ -71,13 +71,13 @@ class BlizzardMap:
                         if pos.x == 1:
                             x = self.x_size - 1
                         else:
-                            x = (pos.x - 1) % (self.x_size)
+                            x = pos.x - 1
                         y = pos.y
                     case "^":
                         if pos.y == 1:
                             y = self.y_size - 1
                         else:
-                            y = (pos.y - 1) % (self.y_size)
+                            y = pos.y - 1
                         x = pos.x
                     case "v":
                         y = max((pos.y + 1) % (self.y_size), 1)
@@ -98,61 +98,31 @@ class BlizzardMap:
             return False
         if pos in self.walls:
             return False
-        if not 0 <= pos.x <= self.x_size or not 0 <= pos.y <= self.y_size:
-            return False
-        return True
+        return 0 <= pos.x <= self.x_size and 0 <= pos.y <= self.y_size
+
+    def go(self, from_p: Point2D, to_p: Point2D) -> int:
+        final_points = {from_p}
+        minute = 0
+        while True:
+            self.move_blizzards()
+            minute += 1
+            final_points = {p for fp in final_points for p in self.possible_moves(fp)}
+            print(f"{minute=}, paths={len(final_points)}", end="\r")
+            if to_p in final_points:
+                break
+        return minute
 
 
 def solve_a(data):
     m = BlizzardMap()
     m.parse(data)
-    final_points = {m.start}
-    minute = 0
-    while True:
-        m.move_blizzards()
-        minute += 1
-        final_points = {p for fp in final_points for p in m.possible_moves(fp)}
-        print(f"{minute=}, paths={len(final_points)}", end="\r")
-        if m.end in final_points:
-            break
-    return minute
+    return m.go(m.start, m.end)
 
 
 def solve_b(data):
     m = BlizzardMap()
     m.parse(data)
-
-    final_points = {m.start}
-    minute = 0
-    while True:
-        m.move_blizzards()
-        minute += 1
-        final_points = {p for fp in final_points for p in m.possible_moves(fp)}
-        print(f"{minute=}, paths={len(final_points)}     ", end="\r")
-        if m.end in final_points:
-            break
-
-    # back
-    final_points = {m.end}
-    while True:
-        m.move_blizzards()
-        minute += 1
-        final_points = {p for fp in final_points for p in m.possible_moves(fp)}
-        print(f"{minute=}, paths={len(final_points)}     ", end="\r")
-        if m.start in final_points:
-            break
-
-    # forth again
-    final_points = {m.start}
-    while True:
-        m.move_blizzards()
-        minute += 1
-        final_points = {p for fp in final_points for p in m.possible_moves(fp)}
-        print(f"{minute=}, paths={len(final_points)}     ", end="\r")
-        if m.end in final_points:
-            break
-
-    return minute
+    return m.go(m.start, m.end) + m.go(m.end, m.start) + m.go(m.start, m.end)
 
 
 if __name__ == "__main__":
