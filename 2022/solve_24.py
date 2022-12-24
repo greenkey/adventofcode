@@ -1,3 +1,4 @@
+import curses
 from collections import defaultdict
 
 import solve
@@ -52,12 +53,26 @@ class BlizzardMap:
         self.y_size = y
 
     def get_points(self):
-        return {**self.walls, **{p: str(len(b)) for p, b in self.blizzards.items()}}
+        return {**self.walls, **{p: "@" for p, b in self.blizzards.items()}}
 
-    def print(self, then_wait=False, top_notes: str = "", additional_points=None):
-        points = additional_points or {}
-        points.update(self.get_points())
-        print_map(points, then_wait=then_wait, top_notes=top_notes)
+    def print(
+        self,
+        then_wait=False,
+        top_notes: str = "",
+        additional_points=None,
+        screen=None,
+        colors=None,
+    ):
+        if screen:
+            points = additional_points or {}
+            points.update(self.get_points())
+            print_map(
+                points=points,
+                then_wait=then_wait,
+                top_notes=top_notes,
+                screen=screen,
+                colors=colors,
+            )
 
     def move_blizzards(self):
         new_blizzards = defaultdict(list)
@@ -100,29 +115,45 @@ class BlizzardMap:
             return False
         return 0 <= pos.x <= self.x_size and 0 <= pos.y <= self.y_size
 
-    def go(self, from_p: Point2D, to_p: Point2D) -> int:
-        final_points = {from_p}
-        minute = 0
-        while True:
-            self.move_blizzards()
-            minute += 1
-            final_points = {p for fp in final_points for p in self.possible_moves(fp)}
-            print(f"{minute=}, paths={len(final_points)}", end="\r")
-            if to_p in final_points:
-                break
-        return minute
+    def go(self, from_p: Point2D, to_p: Point2D, print=False) -> int:
+        def _f(screen=None):
+            final_points = {from_p}
+            minute = 0
+            while True:
+                self.move_blizzards()
+                minute += 1
+                final_points = {p for fp in final_points for p in self.possible_moves(fp)}
+                # print(f"{minute=}, paths={len(final_points)}", end="\r")
+                self.print(
+                    additional_points={p: "O" for p in final_points},
+                    screen=screen,
+                    colors={"#": "white", "@": "cyan", "O": "red"},
+                    top_notes=f"{minute=}, paths={len(final_points)}",
+                )
+                if to_p in final_points:
+                    break
+            return minute
+
+        if print:
+            return curses.wrapper(_f)
+        else:
+            return _f()
 
 
 def solve_a(data):
     m = BlizzardMap()
     m.parse(data)
-    return m.go(m.start, m.end)
+    return m.go(m.start, m.end, print=True)
 
 
 def solve_b(data):
     m = BlizzardMap()
     m.parse(data)
-    return m.go(m.start, m.end) + m.go(m.end, m.start) + m.go(m.start, m.end)
+    return (
+        m.go(m.start, m.end, print=True)
+        + m.go(m.end, m.start, print=True)
+        + m.go(m.start, m.end, print=True)
+    )
 
 
 if __name__ == "__main__":
