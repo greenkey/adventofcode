@@ -43,47 +43,30 @@ def run(year, day, module):
     run_unit_tests(module)
     print(f"Unit tests OK")
 
-    # run a with example data
-    for example in puzzle.examples:
-        example_data_a = getattr(module, "example_data_a", None) or example.input_data
-        answer_a = getattr(module, "answer_example_a", None) or example.answer_a
-        result = str(module.solve_a(example_data_a))
-        assert (
-            result == answer_a
-        ), f"Example A: expecting {answer_a}, got {result}"
-    print(f"Example A: OK")
+    # run parts
+    for part in ["a", "b"]:
+        solve_fun = getattr(module, f"solve_{part}")
 
-    # run a with input data
-    if not puzzle.answered_a:
-        puzzle.answer_a = module.solve_a(puzzle.input_data)
-    else:
-        # regression test
-        answer = str(module.solve_a(puzzle.input_data))
-        assert (
-            puzzle.answer_a == answer
-        ), f"Real data A (regression): expecting {puzzle.answer_a}, got {answer}"
-    print(f"A: {puzzle.answer_a}, rank={puzzle.my_stats['a']['rank']}")
+        # run a with example data
+        for example in puzzle.examples:
+            example_data = getattr(module, f"example_data_{part}", None) or example.input_data
+            answer = getattr(module, f"answer_example_{part}", None) or getattr(example, f"answer_{part}", None)
+            result = str(solve_fun(example_data))
+            assert (
+                result == answer
+            ), f"Example {part.upper()}: expecting {answer}, got {result}"
+        print(f"Example {part.upper()}: OK")
 
-    # run b with example data
-    for example in puzzle.examples:
-        example_data_b = getattr(module, "example_data_b", None) or example.input_data
-        answer_b = getattr(module, "answer_example_b", None) or example.answer_b
-        result = str(module.solve_b(example_data_b))
-        assert (
-            result == answer_b
-        ), f"Example B: expecting {answer_a}, got {result}"
-    print(f"Example B: OK")
-
-    # run b with input data
-    if not puzzle.answered_b:
-        puzzle.answer_b = module.solve_b(puzzle.input_data)
-    else:
-        # regression test
-        answer = str(module.solve_b(puzzle.input_data))
-        assert (
-            puzzle.answer_b == answer
-        ), f"Real data B (regression): expecting {puzzle.answer_b}, got {answer}"
-    print(f"B: {puzzle.answer_b}, rank={puzzle.my_stats['b']['rank']}")
+        # run a with input data
+        if not getattr(puzzle, f"answered_{part}"):
+            setattr(puzzle, f"answer_{part}", solve_fun(puzzle.input_data))
+        else:
+            # regression test
+            answer = str(solve_fun(puzzle.input_data))
+            assert (
+                getattr(puzzle, f"answer_{part}") == answer
+            ), f"Real data {part.upper()} (regression): expecting {getattr(puzzle, f'answer_{part}')}, got {answer}"
+        print(f"{part.upper()}: {getattr(puzzle, f'answer_{part}')}, rank={puzzle.my_stats[part]['rank']}")
 
 
 if __name__ == "__main__":
