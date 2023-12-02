@@ -3,10 +3,6 @@ import run
 year = 2023
 day = 1
 
-DEBUG = False
-
-answer_example_a = 142
-answer_example_b = 281
 example_data_b = '\n'.join([
     "two1nine",
     "eightwothree",

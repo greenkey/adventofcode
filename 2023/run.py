@@ -44,11 +44,13 @@ def run(year, day, module):
     print(f"Unit tests OK")
 
     # run a with example data
-    example_data_a = getattr(module, "example_data_a", puzzle.example_data)
-    result = module.solve_a(example_data_a)
-    assert (
-        result == module.answer_example_a
-    ), f"Example A: expecting {module.answer_example_a}, got {result}"
+    for example in puzzle.examples:
+        example_data_a = getattr(module, "example_data_a", None) or example.input_data
+        answer_a = getattr(module, "answer_example_a", None) or example.answer_a
+        result = str(module.solve_a(example_data_a))
+        assert (
+            result == answer_a
+        ), f"Example A: expecting {answer_a}, got {result}"
     print(f"Example A: OK")
 
     # run a with input data
@@ -63,11 +65,13 @@ def run(year, day, module):
     print(f"A: {puzzle.answer_a}, rank={puzzle.my_stats['a']['rank']}")
 
     # run b with example data
-    example_data_b = getattr(module, "example_data_b", puzzle.example_data)
-    result = module.solve_b(example_data_b)
-    assert (
-        result == module.answer_example_b
-    ), f"Example B: expecting {module.answer_example_b}, got {result}"
+    for example in puzzle.examples:
+        example_data_b = getattr(module, "example_data_b", None) or example.input_data
+        answer_b = getattr(module, "answer_example_b", None) or example.answer_b
+        result = str(module.solve_b(example_data_b))
+        assert (
+            result == answer_b
+        ), f"Example B: expecting {answer_a}, got {result}"
     print(f"Example B: OK")
 
     # run b with input data

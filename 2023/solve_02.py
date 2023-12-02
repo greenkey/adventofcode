@@ -3,9 +3,6 @@ import run
 year = 2023
 day = 2
 
-answer_example_a = 8
-answer_example_b = 2286
-
 
 def solve_a(data):
     bag = {
