@@ -25,17 +25,9 @@ def solve_a(data):
 def solve_b(data):
     nums = []
     for line in data.splitlines():
-        print("="*80)
-        print(line)
         digits = f"{_first_digit(line)}{_last_digit(line)}"
-        try:
-            n = int(digits)
-        except Exception:
-            print(line)
-            raise
-        print(n)
+        n = int(digits)
         nums.append(n)
-    print(nums)
     return sum(nums)
 
 
