@@ -1,8 +1,10 @@
+from collections import defaultdict
 from run import runme
 
 year = 2023
 day = 3
 
+answer_example_b = "467835"
 
 def solve_a(data):
     matrix = _create_matrix(data)
@@ -12,7 +14,7 @@ def solve_a(data):
         num
         for num, coords in numbers
         if any(
-            _is_close_to_symbol(coord, matrix)
+            list(_get_close_symbols(coord, matrix))
             for coord
             in coords
             )
@@ -22,7 +24,35 @@ def solve_a(data):
 
 
 def solve_b(data):
-    ...
+    matrix = _create_matrix(data)
+    numbers = list(_get_numbers(matrix))
+    
+    gears = defaultdict(list)
+    for num, coords in numbers:
+        close_symbols = sum(
+            (list(_get_close_symbols(coord, matrix))
+            for coord in coords), start = []
+        )
+        close_symbols = set(close_symbols)
+        if not close_symbols:
+            continue
+
+        for symbol, coord in close_symbols:
+            if symbol == "*":
+                gears[coord].append(num)
+
+    total = 0
+    for coord, nums in gears.items():
+        if len(nums) == 2:
+            total += nums[0] * nums[1]
+    
+    return total
+
+    
+
+    
+
+
 
 
 def _create_matrix(data):
@@ -70,7 +100,7 @@ def _get_numbers(matrix):
         x += 1
             
                 
-def _is_close_to_symbol(coord, matrix):
+def _get_close_symbols(coord, matrix):
     x, y = coord
     for dx in range(-1, 2):
         for dy in range(-1, 2):
@@ -81,8 +111,7 @@ def _is_close_to_symbol(coord, matrix):
             except KeyError:
                 continue
             if char not in "0123456789.":
-                return True
-    return False
+                yield char, (x + dx, y + dy)
 
 
 if __name__ == "__main__":
