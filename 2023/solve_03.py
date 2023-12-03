@@ -4,7 +4,6 @@ from run import runme
 year = 2023
 day = 3
 
-answer_example_b = "467835"
 
 def solve_a(data):
     matrix = _create_matrix(data)
@@ -21,7 +20,6 @@ def solve_a(data):
         ]
     return sum(nums_close_to_symbol)
         
-
 
 def solve_b(data):
     matrix = _create_matrix(data)
@@ -47,12 +45,6 @@ def solve_b(data):
             total += nums[0] * nums[1]
     
     return total
-
-    
-
-    
-
-
 
 
 def _create_matrix(data):
