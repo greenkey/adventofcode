@@ -1,8 +1,6 @@
 import datetime
 import importlib
-import os
 from sys import argv
-from unittest.mock import patch
 
 from aocd.models import Puzzle
 
@@ -27,12 +25,7 @@ def runme():
     caller = inspect.stack()[1]
     m = inspect.getmodule(caller[0])
 
-    if getattr(m, "DEBUG", False):
-        print("DEBUG MODE ON")
-        run(m.year, m.day, m)
-    else:
-        with patch("builtins.print"):
-            run(m.year, m.day, m)
+    run(m.year, m.day, m)
 
 
 def run(year, day, module):
@@ -70,13 +63,6 @@ def run(year, day, module):
 
 
 if __name__ == "__main__":
-    # discover all days
-    days = []
-    for filename in os.listdir("."):
-        if filename.startswith("solve_") and filename.endswith(".py"):
-            days.append(int(filename[6:8]))
-            importlib.import_module(f"solve_{filename[6:8]}")
-
     now = datetime.datetime.now()
     year = now.year
     if len(argv) < 2:
@@ -84,4 +70,7 @@ if __name__ == "__main__":
     else:
         day = argv[1]
 
-    run(year, int(day))
+    # get day's module
+    module = importlib.import_module(f"solve_{day:02d}")
+
+    run(year, int(day), module)
