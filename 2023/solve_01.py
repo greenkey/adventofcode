@@ -3,22 +3,24 @@ import run
 year = 2023
 day = 1
 
-example_data_b = '\n'.join([
-    "two1nine",
-    "eightwothree",
-    "abcone2threexyz",
-    "xtwone3four",
-    "4nineeightseven2",
-    "zoneight234",
-    "7pqrstsixteen",
-])
+example_data_b = "\n".join(
+    [
+        "two1nine",
+        "eightwothree",
+        "abcone2threexyz",
+        "xtwone3four",
+        "4nineeightseven2",
+        "zoneight234",
+        "7pqrstsixteen",
+    ]
+)
 
 
 def solve_a(data):
     nums = []
     for line in data.splitlines():
         digits = [d for d in line if d in "0123456789"]
-        nums.append(int(digits[0]+digits[-1]))
+        nums.append(int(digits[0] + digits[-1]))
     return sum(nums)
 
 
@@ -57,16 +59,16 @@ def _first_digit(s: str) -> int:
     max_len = max(len(k) for k in replacers.keys())
     for start in range(len(s)):
         for length in range(max_len):
-            word = s[start:start+length+1]
+            word = s[start : start + length + 1]
             if word in replacers:
                 return replacers[word]
 
 
 def _last_digit(s: str) -> int:
     max_len = max(len(k) for k in replacers.keys())
-    for start in range(len(s)+1, -1, -1):
+    for start in range(len(s) + 1, -1, -1):
         for length in range(max_len):
-            word = s[start:start+length+1]
+            word = s[start : start + length + 1]
             if word in replacers:
                 return replacers[word]
 

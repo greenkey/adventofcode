@@ -22,6 +22,7 @@ def run_unit_tests(m):
 def runme():
     # get caller module using call stack
     import inspect
+
     caller = inspect.stack()[1]
     m = inspect.getmodule(caller[0])
 
@@ -34,7 +35,7 @@ def run(year, day, module):
 
     # run unit tests
     run_unit_tests(module)
-    print(f"Unit tests OK")
+    print("Unit tests OK")
 
     # run parts
     for part in ["a", "b"]:
@@ -42,8 +43,12 @@ def run(year, day, module):
 
         # run a with example data
         for example in puzzle.examples:
-            example_data = getattr(module, f"example_data_{part}", None) or example.input_data
-            answer = getattr(module, f"answer_example_{part}", None) or getattr(example, f"answer_{part}", None)
+            example_data = (
+                getattr(module, f"example_data_{part}", None) or example.input_data
+            )
+            answer = getattr(module, f"answer_example_{part}", None) or getattr(
+                example, f"answer_{part}", None
+            )
             result = str(solve_fun(example_data))
             assert (
                 result == answer
@@ -59,7 +64,9 @@ def run(year, day, module):
             assert (
                 getattr(puzzle, f"answer_{part}") == answer
             ), f"Real data {part.upper()} (regression): expecting {getattr(puzzle, f'answer_{part}')}, got {answer}"
-        print(f"{part.upper()}: {getattr(puzzle, f'answer_{part}')}, rank={puzzle.my_stats[part]['rank']}")
+        print(
+            f"{part.upper()}: {getattr(puzzle, f'answer_{part}')}, rank={puzzle.my_stats[part]['rank']}"
+        )
 
 
 if __name__ == "__main__":

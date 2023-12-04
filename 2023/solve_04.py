@@ -31,7 +31,7 @@ def solve_a(data):
         card = Card.parse_string(line)
         winning_numbers = card.card_numbers.intersection(card.winning_numbers)
         if winning_numbers:
-            total += 2**(len(winning_numbers)-1)
+            total += 2 ** (len(winning_numbers) - 1)
     return total
 
 
@@ -41,10 +41,9 @@ def solve_b(data):
     for card in initial_cards:
         winning_numbers = card.card_numbers.intersection(card.winning_numbers)
         for i in range(len(winning_numbers)):
-            won_cards[card.num+1+i] += won_cards[card.num]
+            won_cards[card.num + 1 + i] += won_cards[card.num]
 
     return sum(won_cards.values())
-
 
 
 if __name__ == "__main__":

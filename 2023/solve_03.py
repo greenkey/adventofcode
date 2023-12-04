@@ -8,28 +8,23 @@ day = 3
 def solve_a(data):
     matrix = _create_matrix(data)
     numbers = list(_get_numbers(matrix))
-    
+
     nums_close_to_symbol = [
         num
         for num, coords in numbers
-        if any(
-            list(_get_close_symbols(coord, matrix))
-            for coord
-            in coords
-            )
-        ]
+        if any(list(_get_close_symbols(coord, matrix)) for coord in coords)
+    ]
     return sum(nums_close_to_symbol)
-        
+
 
 def solve_b(data):
     matrix = _create_matrix(data)
     numbers = list(_get_numbers(matrix))
-    
+
     gears = defaultdict(list)
     for num, coords in numbers:
         close_symbols = sum(
-            (list(_get_close_symbols(coord, matrix))
-            for coord in coords), start = []
+            (list(_get_close_symbols(coord, matrix)) for coord in coords), start=[]
         )
         close_symbols = set(close_symbols)
         if not close_symbols:
@@ -43,7 +38,7 @@ def solve_b(data):
     for coord, nums in gears.items():
         if len(nums) == 2:
             total += nums[0] * nums[1]
-    
+
     return total
 
 
@@ -90,8 +85,8 @@ def _get_numbers(matrix):
         num = int(num_str)
         yield num, coords
         x += 1
-            
-                
+
+
 def _get_close_symbols(coord, matrix):
     x, y = coord
     for dx in range(-1, 2):
