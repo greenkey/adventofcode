@@ -1,5 +1,5 @@
 from collections import Counter
-from typing import Iterable
+from typing import Callable, Iterable
 
 from run import runme
 
@@ -10,76 +10,115 @@ day = 7
 def solve_a(data: str):
     hand_list = OrderedList()
     for line in data.splitlines():
-        hand_list.insert(parse_line(line))
+        cards, bid_str = line.split()
+        hand_list.insert(Hand(cards, int(bid_str)))
     return sum(hand.bid * i for i, hand in enumerate(hand_list.iterate(), start=1))
 
 
 def solve_b(data):
-    return None
-
-
-def parse_line(card_line: str) -> "Hand":
-    cards, bid_str = card_line.split()
-    return Hand(cards, int(bid_str))
-
-
-card_value_order = "23456789TJQKA"
+    hand_list = OrderedList()
+    for line in data.splitlines():
+        cards, bid_str = line.split()
+        hand_list.insert(Hand(cards, int(bid_str), wildcard="J"))
+    return sum(hand.bid * i for i, hand in enumerate(hand_list.iterate(), start=1))
 
 
 class Hand:
-    def __init__(self, cards: str, bid: int) -> None:
+    scoring = {
+        (5,): 7,
+        (1, 4): 6,
+        (2, 3): 5,
+        (1, 1, 3): 4,
+        (1, 2, 2): 3,
+        (1, 1, 1, 2): 2,
+        (1, 1, 1, 1, 1): 1,
+    }
+
+    def __init__(
+        self,
+        cards: str,
+        bid: int,
+        wildcard: str = "",
+    ) -> None:
         self.cards: str = cards
         self.bid: int = bid
-        self.type_score = self._type_score()
+        self.card_value_order = "23456789TJQKA"
+        if wildcard:
+            self.card_value_order = wildcard + self.card_value_order.replace(
+                wildcard, ""
+            )
+        self.type_score = self._type_score(cards, wildcard=wildcard)
 
-    def _type_score(self) -> int:
-        c = Counter(self.cards)
-        if sorted(c.values()) == [5]:
-            return 7
-        if sorted(c.values()) == [1, 4]:
-            return 6
-        if sorted(c.values()) == [2, 3]:
-            return 5
-        if sorted(c.values()) == [1, 1, 3]:
-            return 4
-        if sorted(c.values()) == [1, 2, 2]:
-            return 3
-        if sorted(c.values()) == [1, 1, 1, 2]:
-            return 2
-        if sorted(c.values()) == [1, 1, 1, 1, 1]:
-            return 1
-        raise ValueError("Invalid hand")
+    def _type_score(self, cards, wildcard: str = "") -> int:
+        c = Counter(cards)
+
+        score = self.scoring[tuple(sorted(c.values()))]
+
+        if wildcard and wildcard in c:
+            for most_common, _ in c.most_common():
+                if most_common != wildcard:
+                    return self._type_score(cards.replace(wildcard, most_common))
+
+        return score
 
     def __lt__(self, other: "Hand"):
         if self.type_score != other.type_score:
             return self.type_score < other.type_score
         for card, other_card in zip(self.cards, other.cards):
             if card != other_card:
-                return card_value_order.index(card) < card_value_order.index(other_card)
+                return self.card_value_order.index(card) < self.card_value_order.index(other_card)
         return False
 
 
 def test_hand_type_score():
-    hand = Hand("AAAAA", 1)
-    assert hand.type_score == 7
+    # Five of a kind (5)
+    hands = [
+        Hand("AAAAA", 1),
+        Hand("AAJAA", 1, wildcard="J"),
+        Hand("AJJJJ", 1, wildcard="J"),
+    ]
+    assert all(hand.type_score == 7 for hand in hands)
 
-    hand = Hand("AA8AA", 1)
-    assert hand.type_score == 6
+    # Four of a kind (4+1)
+    hands = [
+        Hand("AA8AA", 1),
+        Hand("2333J", 1, wildcard="J"),
+        Hand("T55J5", 1, wildcard="J"),
+        Hand("KTJJT", 1, wildcard="J"),
+        Hand("QQQJA", 1, wildcard="J"),
+    ]
+    assert all(hand.type_score == 6 for hand in hands)
 
-    hand = Hand("23332", 1)
-    assert hand.type_score == 5
+    # Full house (3+2)
+    hands = [
+        Hand("23332", 1),
+        Hand("T55TJ", 1, wildcard="J"),
+    ]
+    assert all(hand.type_score == 5 for hand in hands)
 
-    hand = Hand("TTT98", 1)
-    assert hand.type_score == 4
+    # Three of a kind (3+1+1)
+    hands = [
+        Hand("TTT98", 1),
+        Hand("TTJ98", 1, wildcard="J"),
+    ]
+    assert all(hand.type_score == 4 for hand in hands)
 
-    hand = Hand("23432", 1)
-    assert hand.type_score == 3
+    # Two pair (2+2+1)
+    hands = [
+        Hand("23432", 1),
+    ]
+    assert all(hand.type_score == 3 for hand in hands)
 
-    hand = Hand("A23A4", 1)
-    assert hand.type_score == 2
+    # One pair (2+1+1+1)
+    hands = [
+        Hand("A23A4", 1),
+        Hand("A23J4", 1, wildcard="J"),
+    ]
+    assert all(hand.type_score == 2 for hand in hands)
 
-    hand = Hand("23456", 1)
-    assert hand.type_score == 1
+    # High card (1+1+1+1+1)
+    hands = [Hand("23456", 1)]
+    assert all(hand.type_score == 1 for hand in hands)
 
 
 def test_hand_lt():
@@ -92,6 +131,9 @@ def test_hand_lt():
     assert Hand("TTT98", 1) > Hand("23432", 1)
     assert Hand("23432", 1) > Hand("A23A4", 1)
     assert Hand("A23A4", 1) > Hand("23456", 1)
+
+    assert Hand("JKKK2", 1, wildcard="J") < Hand("QQQQ2", 1, wildcard="J")
+    assert Hand("J22AA", 1, wildcard="J") < Hand("22AAA", 1, wildcard="J")
 
 
 class Node:
